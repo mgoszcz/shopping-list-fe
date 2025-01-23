@@ -1,8 +1,10 @@
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Paper, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 import "../index.css";
 
 const ShoppingCartCard = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <Paper
       elevation={3}
@@ -14,21 +16,26 @@ const ShoppingCartCard = () => {
       <Box
         display={"flex"}
         alignItems={"center"}
-        sx={{ height: 100 }}
+        sx={{ height: { xs: 75, sm: 100 } }}
         marginX={5}
         marginY={1}
       >
         <Box display={"flex"} alignItems={"center"}>
-          <Typography variant={"h4"} component={"h3"}>
+          <Typography variant={isMobile ? "h6" : "h4"} component={"h3"}>
             Shopping Item
           </Typography>
-          <Typography variant={"body2"} component={"h4"} marginLeft={2}>
-            Category
-          </Typography>
+          {!isMobile && (
+            <Typography variant={"body2"} component={"h4"} marginLeft={2}>
+              Category
+            </Typography>
+          )}
         </Box>
         <Box display={"flex"} marginLeft={"auto"}>
-          <Edit fontSize={"large"} />
-          <Delete fontSize={"large"} />
+          <Edit fontSize={isMobile ? "small" : "large"} />
+          <Delete
+            fontSize={isMobile ? "small" : "large"}
+            sx={{ marginLeft: 1 }}
+          />
         </Box>
       </Box>
     </Paper>

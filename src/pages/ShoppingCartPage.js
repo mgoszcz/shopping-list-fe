@@ -3,8 +3,7 @@ import ShoppingCartCard from "../components/shoppingCartCard";
 
 const ShoppingCartPage = () => {
   return (
-    <Container maxWidth={"md"} sx={{ minWidth: 600 }}>
-      <h1>Shopping Cart Page</h1>
+    <Container maxWidth={"md"} sx={{ minWidth: 300 }}>
       <ShoppingCartCard />
       <ShoppingCartCard />
       <ShoppingCartCard />
