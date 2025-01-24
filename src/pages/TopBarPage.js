@@ -5,7 +5,7 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchDropDownInput from "../components/SearchDropDownInput";
-import { Add } from "@mui/icons-material";
+import { AddBox } from "@mui/icons-material";
 import { Button, Typography } from "@mui/material";
 
 export default function TopBarPage() {
@@ -28,11 +28,11 @@ export default function TopBarPage() {
           <SearchDropDownInput />
           <Button
             variant={"outlined"}
-            startIcon={<Add fontSize={"large"} />}
+            startIcon={<AddBox fontSize={"large"} />}
             sx={{ marginLeft: 1 }}
             size={"large"}
           >
-            <Typography variant={"h5"} component={"h6"}>
+            <Typography variant={"body1"} component={"h6"}>
               Add
             </Typography>
           </Button>
