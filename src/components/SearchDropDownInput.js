@@ -5,7 +5,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 export default function SearchDropDownInput() {
   return (
     <Autocomplete
-      sx={{ minWidth: 300, marginX: "auto" }}
+      sx={{ minWidth: 200, maxWidth: "90%", marginX: "auto" }}
       freeSolo
       fullWidth
       id="search-article"

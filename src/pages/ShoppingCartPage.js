@@ -1,15 +1,15 @@
 import { Container } from "@mui/material";
 import ShoppingCartCard from "../components/shoppingCartCard";
+import shoppingCart from "../data/shoppingCart.json";
+import NewShoppingCartCard from "../components/newShoppingCartCard";
 
 const ShoppingCartPage = () => {
   return (
     <Container maxWidth={"md"} sx={{ minWidth: 300 }}>
-      <ShoppingCartCard />
-      <ShoppingCartCard />
-      <ShoppingCartCard />
-      <ShoppingCartCard />
-      <ShoppingCartCard />
-      <ShoppingCartCard />
+      <NewShoppingCartCard />
+      {shoppingCart.map((cartItem) => (
+        <ShoppingCartCard cartItem={cartItem} />
+      ))}
     </Container>
   );
 };

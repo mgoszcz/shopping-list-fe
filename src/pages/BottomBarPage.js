@@ -1,6 +1,8 @@
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import { Button } from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
 
 export const BottomBarPage = () => {
   return (
@@ -10,9 +12,17 @@ export const BottomBarPage = () => {
       sx={{ top: "auto", bottom: 0, minWidth: 400, backgroundColor: "#3B1C32" }}
     >
       <Toolbar>
-        <Button variant="outlined" sx={{ marginX: 1, color: "white" }}>
-          Shop Name
-        </Button>
+        <Autocomplete
+          renderInput={({ inputProps, ...rest }) => (
+            <TextField
+              {...rest}
+              label="Shop Name"
+              inputProps={{ ...inputProps, readOnly: true }}
+            />
+          )}
+          options={shops}
+          sx={{ width: "70%" }}
+        />
         <Button variant="outlined" sx={{ marginX: 1, color: "white" }}>
           Categories
         </Button>
@@ -20,3 +30,5 @@ export const BottomBarPage = () => {
     </AppBar>
   );
 };
+
+const shops = ["Auchan", "Kaufland", "Lidl"];
