@@ -15,7 +15,8 @@ const darkTheme = createTheme({
 });
 
 function App() {
-  const [timestampData, setTimestampData] = useState([]);
+  const [shoppingCartTimestamp, setShoppingCartTimestamp] = useState([]);
+  const [currentShopTimestamp, setCurrentShopTimestamp] = useState([]);
   const [shoppingCart, setShoppingCart] = useState([]);
   const [currentShop, setCurrentShop] = useState({});
 
@@ -23,7 +24,8 @@ function App() {
     const fetchTimestampData = async () =>
       getTimestampData()
         .then((data) => {
-          setTimestampData(data);
+          setCurrentShopTimestamp(data[TABLE_NAMES.CURRENT_SHOP]);
+          setShoppingCartTimestamp(data[TABLE_NAMES.SHOPPING_CART]);
           console.log("fetching timestamp");
         })
         .catch((error) => console.error("Failed to get timestamp data", error));
@@ -42,7 +44,7 @@ function App() {
       .catch((error) =>
         console.error("Failed to get shopping cart data", error),
       );
-  }, [timestampData[TABLE_NAMES.SHOPPING_CART], currentShop]);
+  }, [shoppingCartTimestamp, currentShop]);
 
   useEffect(() => {
     getCurrentShop()
@@ -51,7 +53,7 @@ function App() {
         console.log("fetching currentShop");
       })
       .catch((error) => console.error("Failed to get current shop", error));
-  }, [timestampData[TABLE_NAMES.CURRENT_SHOP]]);
+  }, [currentShopTimestamp]);
 
   const shoppingCartProcessor = new ShoppingCartDataProcessor(
     shoppingCart,
