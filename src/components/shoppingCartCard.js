@@ -73,7 +73,7 @@ const ShoppingCartCard = ({ cartItem, shoppingCartProcessor }) => {
               width: 25,
               marginRight: 1,
             }}
-            defaultValue={cartItem.quantity}
+            value={cartItem.quantity}
             onChange={(e) =>
               shoppingCartProcessor.changeQuantity(cartItem, e.target.value)
             }
