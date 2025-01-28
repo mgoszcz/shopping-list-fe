@@ -33,7 +33,7 @@ const ShoppingCartCard = ({ cartItem, shoppingCartProcessor }) => {
       >
         <CardActionArea
           onClick={() => shoppingCartProcessor.toggleChecked(cartItem)}
-          sx={{ maxWidth: isMobile ? "55%" : "70%" }}
+          sx={{ maxWidth: isMobile ? "65%" : "70%" }}
         >
           <Box
             display={"flex"}
@@ -70,7 +70,7 @@ const ShoppingCartCard = ({ cartItem, shoppingCartProcessor }) => {
             variant="outlined"
             size={isMobile ? "small" : "medium"}
             sx={{
-              width: 50,
+              width: 25,
               marginRight: 1,
             }}
             defaultValue={cartItem.quantity}
