@@ -2,6 +2,7 @@ import {
   deleteShoppingCartItem,
   updateShoppingCartItem,
 } from "../api/shoppingCartData";
+import logger from "../../logger/logger";
 
 export class ShoppingCartDataProcessor {
   #state;
@@ -17,7 +18,7 @@ export class ShoppingCartDataProcessor {
     const data = { quantity: cartItem.quantity, checked: newCheckedState };
     updateShoppingCartItem(cartItem.id, data)
       .then(() => {
-        console.log("Item edited successfully!");
+        logger.debug("Toggle checked state request accepted");
         this.#setState(
           this.#state.map((item) =>
             item.id === cartItem.id
@@ -27,18 +28,18 @@ export class ShoppingCartDataProcessor {
         );
       })
       .catch((error) => {
-        console.error("Failed to toggle checked state: ", error);
+        logger.error("Failed to toggle checked state: ", error);
       });
   }
 
   async deleteCartItem(cartItem) {
     deleteShoppingCartItem(cartItem.id)
       .then(() => {
-        console.log("Item removed successfully");
+        logger.debug("Remove cart item request accepted");
         this.#setState(this.#state.filter((item) => item.id !== cartItem.id));
       })
       .catch((error) => {
-        console.error("Failed to delete item: ", error);
+        logger.error("Failed to delete item: ", error);
       });
   }
 
@@ -47,7 +48,7 @@ export class ShoppingCartDataProcessor {
     const data = { quantity, checked: cartItem.checked };
     updateShoppingCartItem(cartItem.id, data)
       .then(() => {
-        console.log("Item edited successfully!");
+        logger.debug("Update quantity request accepted");
         this.#setState(
           this.#state.map((item) =>
             item.id === cartItem.id ? { ...item, quantity } : item,
@@ -55,7 +56,7 @@ export class ShoppingCartDataProcessor {
         );
       })
       .catch((error) => {
-        console.error("Failed to change quantity: ", error);
+        logger.error("Failed to change quantity: ", error);
       });
   }
 }
