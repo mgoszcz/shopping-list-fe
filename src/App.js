@@ -7,6 +7,7 @@ import { getTimestampData } from "./data/api/timestampData";
 import { TABLE_NAMES } from "./constants/tableNames";
 import { getCurrentShop } from "./data/api/currentShopData";
 import { ShoppingCartDataProcessor } from "./data/processors/shoppingCartDataProcessor";
+import logger from "./logger/logger";
 
 const darkTheme = createTheme({
   palette: {
@@ -26,9 +27,9 @@ function App() {
         .then((data) => {
           setCurrentShopTimestamp(data[TABLE_NAMES.CURRENT_SHOP]);
           setShoppingCartTimestamp(data[TABLE_NAMES.SHOPPING_CART]);
-          console.log("fetching timestamp");
+          logger.debug("Fetching Timestamp");
         })
-        .catch((error) => console.error("Failed to get timestamp data", error));
+        .catch((error) => logger.error("Failed to get timestamp data", error));
     fetchTimestampData();
     const intervalId = setInterval(fetchTimestampData, 5000);
 
@@ -39,10 +40,10 @@ function App() {
     getShoppingCartData()
       .then((data) => {
         setShoppingCart(data);
-        console.log("fetching shoppingcart");
+        logger.debug("Fetching ShoppingCart");
       })
       .catch((error) =>
-        console.error("Failed to get shopping cart data", error),
+        logger.error("Failed to get shopping cart data", error),
       );
   }, [shoppingCartTimestamp, currentShop]);
 
@@ -50,9 +51,9 @@ function App() {
     getCurrentShop()
       .then((data) => {
         setCurrentShop(data);
-        console.log("fetching currentShop");
+        logger.debug("Fetching CurrentShop");
       })
-      .catch((error) => console.error("Failed to get current shop", error));
+      .catch((error) => logger.error("Failed to get current shop", error));
   }, [currentShopTimestamp]);
 
   const shoppingCartProcessor = new ShoppingCartDataProcessor(
