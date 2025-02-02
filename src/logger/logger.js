@@ -26,7 +26,7 @@ class Logger {
 
 let logger;
 if (process.env.REACT_APP_ENVIRONMENT === "local") {
-  logger = new Logger(LOG_LEVEL.INFO);
+  logger = new Logger(LOG_LEVEL.DEBUG);
 } else if (process.env.REACT_APP_ENVIRONMENT === "development") {
   logger = new Logger(LOG_LEVEL.INFO);
 } else {
