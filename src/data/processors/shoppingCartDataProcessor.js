@@ -1,5 +1,7 @@
 import {
+  addShoppingCartItem,
   deleteShoppingCartItem,
+  getShoppingCartData,
   updateShoppingCartItem,
 } from "../api/shoppingCartData";
 import logger from "../../logger/logger";
@@ -11,6 +13,17 @@ export class ShoppingCartDataProcessor {
   constructor(state, setState) {
     this.#state = state;
     this.#setState = setState;
+  }
+
+  async getShoppingCartItems() {
+    getShoppingCartData()
+      .then((data) => {
+        this.#setState(data);
+        logger.debug("Fetching ShoppingCart");
+      })
+      .catch((error) =>
+        logger.error("Failed to get shopping cart data", error),
+      );
   }
 
   async toggleChecked(cartItem) {
@@ -57,6 +70,19 @@ export class ShoppingCartDataProcessor {
       })
       .catch((error) => {
         logger.error("Failed to change quantity: ", error);
+      });
+  }
+
+  async addCartItem(articleId) {
+    return addShoppingCartItem(articleId)
+      .then(() => {
+        logger.debug("Add cart item request accepted");
+        this.getShoppingCartItems();
+        return true;
+      })
+      .catch((error) => {
+        logger.error("Failed to add item: ", error);
+        return false;
       });
   }
 }

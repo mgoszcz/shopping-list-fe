@@ -1,13 +1,13 @@
-import "./App.css";
+import React from "react";
 import { useEffect, useState } from "react";
 import ShoppingCartPage from "./pages/shoppingCartPage";
-import { getShoppingCartData } from "./data/api/shoppingCartData";
 import { createTheme, ThemeProvider } from "@mui/material";
 import { getTimestampData } from "./data/api/timestampData";
 import { TABLE_NAMES } from "./constants/tableNames";
 import { getCurrentShop } from "./data/api/currentShopData";
 import { ShoppingCartDataProcessor } from "./data/processors/shoppingCartDataProcessor";
 import logger from "./logger/logger";
+import TopBar from "./components/topBar";
 
 const darkTheme = createTheme({
   palette: {
@@ -18,6 +18,7 @@ const darkTheme = createTheme({
 function App() {
   const [shoppingCartTimestamp, setShoppingCartTimestamp] = useState([]);
   const [currentShopTimestamp, setCurrentShopTimestamp] = useState([]);
+  const [articlesTimestamp, setArticlesTimestamp] = useState([]);
   const [shoppingCart, setShoppingCart] = useState([]);
   const [currentShop, setCurrentShop] = useState({});
 
@@ -27,6 +28,7 @@ function App() {
         .then((data) => {
           setCurrentShopTimestamp(data[TABLE_NAMES.CURRENT_SHOP]);
           setShoppingCartTimestamp(data[TABLE_NAMES.SHOPPING_CART]);
+          setArticlesTimestamp(data[TABLE_NAMES.SHOPPING_ARTICLES]);
           logger.debug("Fetching Timestamp");
         })
         .catch((error) => logger.error("Failed to get timestamp data", error));
@@ -37,14 +39,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    getShoppingCartData()
-      .then((data) => {
-        setShoppingCart(data);
-        logger.debug("Fetching ShoppingCart");
-      })
-      .catch((error) =>
-        logger.error("Failed to get shopping cart data", error),
-      );
+    shoppingCartProcessor.getShoppingCartItems();
   }, [shoppingCartTimestamp, currentShop]);
 
   useEffect(() => {
@@ -64,6 +59,11 @@ function App() {
   return (
     <ThemeProvider theme={darkTheme}>
       <div className="App">
+        <TopBar
+          articlesTimestamp={articlesTimestamp}
+          shoppingCart={shoppingCart}
+          shoppingCartProcessor={shoppingCartProcessor}
+        />
         <ShoppingCartPage
           shoppingCartProcessor={shoppingCartProcessor}
           shoppingCart={shoppingCart}
