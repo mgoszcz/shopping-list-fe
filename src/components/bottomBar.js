@@ -1,6 +1,12 @@
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import { Button, Typography, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import React, { useEffect } from "react";
@@ -67,56 +73,68 @@ export const BottomBar = ({ currentShop, setCurrentShop, shopsTimestamp }) => {
   };
 
   return (
-    <AppBar
-      position="fixed"
-      color="primary"
-      sx={{ top: "auto", bottom: 0, minWidth: 400, backgroundColor: "#3B1C32" }}
-    >
-      <Toolbar>
-        <Autocomplete
-          onOpen={handleOpen}
-          onClose={handleClose}
-          open={open}
-          loading={loading}
-          getOptionLabel={(option) => (option.name ? option.name : "")}
-          getOptionDisabled={(option) => option.id === 0}
-          value={currentSelection}
-          disableClearable
-          onChange={(event, value) => {
-            handleSelect(event, value);
-          }}
-          renderOption={(props, option) => (
-            <li {...props} key={option.id} data-id={option.id}>
-              <Typography variant={"h6"} noWrap>
-                {option.name}
-              </Typography>
-            </li>
-          )}
-          renderInput={({ inputProps, ...rest }) => (
-            <TextField
-              {...rest}
-              label="Shop Name"
-              inputProps={{ ...inputProps, readOnly: true }}
-            />
-          )}
-          options={[...shops, { name: "Add Shop...", id: 0 }]}
-          sx={{ width: "70%" }}
-        />
-        <Button
-          startIcon={<SwapVert fontSize={"large"} />}
-          variant="contained"
-          sx={{ marginX: 1, color: "white", backgroundColor: "#A64D79" }}
-        >
-          {isMobile ? "" : "Categories"}
-        </Button>
-        <Button
-          startIcon={<Delete />}
-          variant="contained"
-          sx={{ marginX: 1, color: "white", backgroundColor: "#A64D79" }}
-        >
-          {isMobile ? "" : "Delete"}
-        </Button>
-      </Toolbar>
-    </AppBar>
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar
+        position="fixed"
+        color="primary"
+        sx={{
+          top: "auto",
+          bottom: 0,
+          minWidth: 400,
+          backgroundColor: "#3B1C32",
+          marginX: "auto",
+        }}
+      >
+        <Toolbar>
+          <Typography>{isMobile ? "0.1.0" : "Shopping List 0.1.0"}</Typography>
+          <Autocomplete
+            onOpen={handleOpen}
+            onClose={handleClose}
+            fullWidth
+            open={open}
+            loading={loading}
+            getOptionLabel={(option) => (option.name ? option.name : "")}
+            getOptionDisabled={(option) => option.id === 0}
+            value={currentSelection}
+            disableClearable
+            onChange={(event, value) => {
+              handleSelect(event, value);
+            }}
+            renderOption={(props, option) => (
+              <li {...props} key={option.id} data-id={option.id}>
+                <Typography variant={"h6"} noWrap>
+                  {option.name}
+                </Typography>
+              </li>
+            )}
+            renderInput={({ inputProps, ...rest }) => (
+              <TextField
+                {...rest}
+                label="Shop Name"
+                inputProps={{ ...inputProps, readOnly: true }}
+              />
+            )}
+            options={[...shops, { name: "Add Shop...", id: 0 }]}
+            sx={{ minWidth: 200, maxWidth: "50%", marginLeft: "auto" }}
+          />
+          <Button
+            startIcon={<SwapVert fontSize={"large"} />}
+            variant="contained"
+            disabled={true}
+            sx={{ marginX: 1, color: "white", backgroundColor: "#A64D79" }}
+          >
+            {isMobile ? "" : "Categories"}
+          </Button>
+          <Button
+            startIcon={<Delete />}
+            variant="contained"
+            disabled={true}
+            sx={{ marginX: 1, color: "white", backgroundColor: "#A64D79" }}
+          >
+            {isMobile ? "" : "Delete"}
+          </Button>
+        </Toolbar>
+      </AppBar>
+    </Box>
   );
 };

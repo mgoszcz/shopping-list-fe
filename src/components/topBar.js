@@ -54,7 +54,8 @@ export default function TopBar({
             sx={{
               backgroundColor: "#A64D79",
               "&.Mui-disabled": {
-                backgroundColor: "#524C42",
+                backgroundColor: "#A64D79",
+                opacity: 0.4,
               },
             }}
             size={isMobile ? "medium" : "large"}
