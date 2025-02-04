@@ -5,6 +5,16 @@ import { useEffect, useState } from "react";
 import { getArticles } from "../data/api/articlesData";
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 
+const removeDiacritics = require("diacritics").remove;
+
+const isArticleInCart = (article, shoppingCart) => {
+  return shoppingCart.some(
+    (item) =>
+      item.article.name === article.name &&
+      item.category.name === article.category.name,
+  );
+};
+
 export default function SearchDropDownInput({
   articlesTimestamp,
   inputValue,
@@ -54,7 +64,9 @@ export default function SearchDropDownInput({
       setAddButtonDisabled(false);
     }
     const existingArticle = articles.find(
-      (article) => article.name.toLowerCase() === newValue.toLowerCase(),
+      (article) =>
+        removeDiacritics(article.name.toLowerCase()) ===
+        removeDiacritics(newValue.toLowerCase()),
     );
     if (existingArticle) {
       if (
@@ -71,6 +83,7 @@ export default function SearchDropDownInput({
       setSearchItem({ id: null, name: newValue });
     }
   };
+
   const handleSelect = (event, newValue) => {
     const articleId = parseInt(newValue.id);
     setSearchItem({ id: articleId, name: "" });
@@ -89,15 +102,14 @@ export default function SearchDropDownInput({
       id="search-article"
       disableClearable
       getOptionLabel={(option) => option.name}
-      isOptionEqualToValue={(option, value) => option.name === value.name}
-      inputValue={inputValue}
-      getOptionDisabled={(option) => {
-        return shoppingCart.some(
-          (item) =>
-            item.article.name === option.name &&
-            item.category.name === option.category.name,
+      filterOptions={(options, { inputValue }) => {
+        const normalizedInput = removeDiacritics(inputValue.toLowerCase());
+        return options.filter((option) =>
+          removeDiacritics(option.name.toLowerCase()).includes(normalizedInput),
         );
       }}
+      inputValue={inputValue}
+      getOptionDisabled={(option) => isArticleInCart(option, shoppingCart)}
       renderOption={(props, option) => (
         <li {...props} key={option.id} data-id={option.id}>
           <Box>
@@ -112,15 +124,22 @@ export default function SearchDropDownInput({
       )}
       onChange={(event, inputValue) => handleSelect(event, inputValue)}
       onInputChange={(event, newInputValue) => handleType(event, newInputValue)}
-      options={articles}
+      options={articles.sort((a, b) => {
+        if (
+          isArticleInCart(a, shoppingCart) &&
+          !isArticleInCart(b, shoppingCart)
+        ) {
+          return 1;
+        } else if (
+          !isArticleInCart(a, shoppingCart) &&
+          isArticleInCart(b, shoppingCart)
+        ) {
+          return -1;
+        } else {
+          return 0;
+        }
+      })}
       loading={loading}
-      slotProps={{
-        paper: {
-          sx: {
-            backgroundColor: "#1A1A1D",
-          },
-        },
-      }}
       renderInput={(params) => (
         <TextField
           {...params}

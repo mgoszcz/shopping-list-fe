@@ -48,6 +48,7 @@ export default function TopBar({
             setAddButtonDisabled={setAddButtonDisabled}
             inputValue={inputValue}
             setInputValue={setInputValue}
+            size={isMobile ? "medium" : "large"}
           />
           <IconButton
             sx={{
