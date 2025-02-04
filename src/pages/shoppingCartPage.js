@@ -3,7 +3,7 @@ import ShoppingCartCard from "../components/shoppingCartCard";
 
 const ShoppingCartPage = ({ shoppingCart, shoppingCartProcessor }) => {
   return (
-    <Container maxWidth={"md"} sx={{ minWidth: 300 }}>
+    <Container maxWidth={"md"} sx={{ minWidth: 300, pb: "60px" }}>
       {shoppingCart.map((cartItem) => (
         <ShoppingCartCard
           cartItem={cartItem}

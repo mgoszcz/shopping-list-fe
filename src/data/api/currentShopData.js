@@ -7,3 +7,9 @@ export const getCurrentShop = async () => {
   logger.debug(response);
   return response.data;
 };
+
+export const updateCurrentShop = async (shopId) => {
+  const response = await api.put(currentShopEndpoints.put, { shop_id: shopId });
+  logger.debug(response);
+  return response;
+};

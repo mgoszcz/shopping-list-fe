@@ -8,6 +8,7 @@ import { getCurrentShop } from "./data/api/currentShopData";
 import { ShoppingCartDataProcessor } from "./data/processors/shoppingCartDataProcessor";
 import logger from "./logger/logger";
 import TopBar from "./components/topBar";
+import { BottomBar } from "./components/bottomBar";
 
 const darkTheme = createTheme({
   palette: {
@@ -19,6 +20,7 @@ function App() {
   const [shoppingCartTimestamp, setShoppingCartTimestamp] = useState([]);
   const [currentShopTimestamp, setCurrentShopTimestamp] = useState([]);
   const [articlesTimestamp, setArticlesTimestamp] = useState([]);
+  const [shopsTimestamp, setShopsTimestamp] = useState([]);
   const [shoppingCart, setShoppingCart] = useState([]);
   const [currentShop, setCurrentShop] = useState({});
 
@@ -29,6 +31,7 @@ function App() {
           setCurrentShopTimestamp(data[TABLE_NAMES.CURRENT_SHOP]);
           setShoppingCartTimestamp(data[TABLE_NAMES.SHOPPING_CART]);
           setArticlesTimestamp(data[TABLE_NAMES.SHOPPING_ARTICLES]);
+          setShopsTimestamp(data[TABLE_NAMES.SHOPS]);
           logger.debug("Fetching Timestamp");
         })
         .catch((error) => logger.error("Failed to get timestamp data", error));
@@ -68,7 +71,11 @@ function App() {
           shoppingCartProcessor={shoppingCartProcessor}
           shoppingCart={shoppingCart}
         />
-        {currentShop.name}
+        <BottomBar
+          currentShop={currentShop}
+          setCurrentShop={setCurrentShop}
+          shopsTimestamp={shopsTimestamp}
+        />
       </div>
     </ThemeProvider>
   );

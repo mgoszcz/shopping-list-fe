@@ -3,7 +3,7 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import SearchDropDownInput from "./searchDropDownInput";
-import { AddRounded } from "@mui/icons-material";
+import { PlaylistAddRounded } from "@mui/icons-material";
 import { useMediaQuery, useTheme } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import logger from "../logger/logger";
@@ -54,14 +54,15 @@ export default function TopBar({
             sx={{
               backgroundColor: "#A64D79",
               "&.Mui-disabled": {
-                backgroundColor: "#524C42",
+                backgroundColor: "#A64D79",
+                opacity: 0.4,
               },
             }}
             size={isMobile ? "medium" : "large"}
             onClick={handleAddButtonClick}
             disabled={addButtonDisabled}
           >
-            <AddRounded fontSize={"inherit"} />
+            <PlaylistAddRounded fontSize={"inherit"} />
           </IconButton>
         </Toolbar>
       </AppBar>
