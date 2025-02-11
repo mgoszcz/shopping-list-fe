@@ -2,7 +2,6 @@ import * as React from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useEffect, useState } from "react";
-import { getArticles } from "../data/api/articlesData";
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 
 const removeDiacritics = require("diacritics").remove;
@@ -22,11 +21,11 @@ export default function SearchDropDownInput({
   setSearchItem,
   shoppingCart,
   setAddButtonDisabled,
+  articlesProcessor,
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const [articles, setArticles] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [needsUpdate, setNeedsUpdate] = useState(false);
@@ -42,12 +41,11 @@ export default function SearchDropDownInput({
     if (!needsUpdate) {
       return;
     }
-    setArticles([]);
+    articlesProcessor.clearState();
     (async () => {
       setLoading(true);
-      const fetchedArticles = await getArticles();
+      await articlesProcessor.getShoppingArticlesData();
       setLoading(false);
-      setArticles(fetchedArticles);
       setNeedsUpdate(false);
     })();
   };
@@ -63,7 +61,7 @@ export default function SearchDropDownInput({
     } else {
       setAddButtonDisabled(false);
     }
-    const existingArticle = articles.find(
+    const existingArticle = articlesProcessor.state.find(
       (article) =>
         removeDiacritics(article.name.toLowerCase()) ===
         removeDiacritics(newValue.toLowerCase()),
@@ -124,7 +122,7 @@ export default function SearchDropDownInput({
       )}
       onChange={(event, inputValue) => handleSelect(event, inputValue)}
       onInputChange={(event, newInputValue) => handleType(event, newInputValue)}
-      options={articles.sort((a, b) => {
+      options={articlesProcessor.state.sort((a, b) => {
         if (
           isArticleInCart(a, shoppingCart) &&
           !isArticleInCart(b, shoppingCart)

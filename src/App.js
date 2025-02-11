@@ -9,6 +9,7 @@ import { ShoppingCartDataProcessor } from "./data/processors/shoppingCartDataPro
 import logger from "./logger/logger";
 import TopBar from "./components/topBar";
 import { BottomBar } from "./components/bottomBar";
+import { ShoppingArticlesProcessor } from "./data/processors/shoppingArticlesProcessor";
 
 const darkTheme = createTheme({
   palette: {
@@ -23,6 +24,9 @@ function App() {
   const [shopsTimestamp, setShopsTimestamp] = useState([]);
   const [shoppingCart, setShoppingCart] = useState([]);
   const [currentShop, setCurrentShop] = useState({});
+  const [articlePopupOpen, setArticlePopupOpen] = useState(false);
+  const [articles, setArticles] = useState([]);
+  const [editingArticle, setEditingArticle] = useState({});
 
   useEffect(() => {
     const fetchTimestampData = async () =>
@@ -59,6 +63,12 @@ function App() {
     setShoppingCart,
   );
 
+  const articlesProcessor = new ShoppingArticlesProcessor(
+    articles,
+    setArticles,
+    shoppingCartProcessor,
+  );
+
   return (
     <ThemeProvider theme={darkTheme}>
       <div className="App">
@@ -66,10 +76,18 @@ function App() {
           articlesTimestamp={articlesTimestamp}
           shoppingCart={shoppingCart}
           shoppingCartProcessor={shoppingCartProcessor}
+          articlesProcessor={articlesProcessor}
+          setArticlePopupOpen={setArticlePopupOpen}
+          setEditingArticle={setEditingArticle}
         />
         <ShoppingCartPage
           shoppingCartProcessor={shoppingCartProcessor}
           shoppingCart={shoppingCart}
+          setArticlePopupOpen={setArticlePopupOpen}
+          articlePopupOpen={articlePopupOpen}
+          editingArticle={editingArticle}
+          setEditingArticle={setEditingArticle}
+          articlesProcessor={articlesProcessor}
         />
         <BottomBar
           currentShop={currentShop}

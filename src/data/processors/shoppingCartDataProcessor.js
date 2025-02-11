@@ -26,6 +26,10 @@ export class ShoppingCartDataProcessor {
       );
   }
 
+  async getCartItemByArticleId(articleId) {
+    return this.#state.find((item) => item.article.id === articleId);
+  }
+
   async toggleChecked(cartItem) {
     const newCheckedState = !cartItem.checked;
     const data = { quantity: cartItem.quantity, checked: newCheckedState };
@@ -46,14 +50,13 @@ export class ShoppingCartDataProcessor {
   }
 
   async deleteCartItem(cartItem) {
-    deleteShoppingCartItem(cartItem.id)
-      .then(() => {
-        logger.debug("Remove cart item request accepted");
-        this.#setState(this.#state.filter((item) => item.id !== cartItem.id));
-      })
-      .catch((error) => {
-        logger.error("Failed to delete item: ", error);
-      });
+    try {
+      await deleteShoppingCartItem(cartItem.id);
+      logger.debug("Remove cart item request accepted");
+      this.#setState(this.#state.filter((item) => item.id !== cartItem.id));
+    } catch (error) {
+      logger.error("Failed to delete item: ", error);
+    }
   }
 
   async changeQuantity(cartItem, quantity) {

@@ -11,7 +11,12 @@ import { Delete, Edit } from "@mui/icons-material";
 import "../index.css";
 import IconButton from "@mui/material/IconButton";
 
-const ShoppingCartCard = ({ cartItem, shoppingCartProcessor }) => {
+const ShoppingCartCard = ({
+  cartItem,
+  shoppingCartProcessor,
+  setArticlePopupOpen,
+  setEditingArticle,
+}) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const backgroundColor = cartItem.checked ? "#0F0F0F" : "#6A1E55";
@@ -78,7 +83,13 @@ const ShoppingCartCard = ({ cartItem, shoppingCartProcessor }) => {
               shoppingCartProcessor.changeQuantity(cartItem, e.target.value)
             }
           />
-          <IconButton>
+          <IconButton
+            aria-label={"edit"}
+            onClick={() => {
+              setArticlePopupOpen(true);
+              setEditingArticle({ id: cartItem.article.id });
+            }}
+          >
             <Edit fontSize={isMobile ? "small" : "large"} />
           </IconButton>
           <IconButton

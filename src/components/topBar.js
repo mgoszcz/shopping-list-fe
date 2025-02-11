@@ -12,6 +12,9 @@ export default function TopBar({
   articlesTimestamp,
   shoppingCartProcessor,
   shoppingCart,
+  articlesProcessor,
+  setArticlePopupOpen,
+  setEditingArticle,
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -23,7 +26,11 @@ export default function TopBar({
   const handleAddButtonClick = async () => {
     logger.debug("Add button clicked");
     if (!searchItem.id) {
-      logger.info("New item creation here");
+      setEditingArticle({ name: inputValue, id: 0 });
+      setArticlePopupOpen(true);
+      setInputValue("");
+      setSearchItem({});
+      setAddButtonDisabled(true);
       return;
     }
     const result = await shoppingCartProcessor.addCartItem(searchItem.id);
@@ -49,6 +56,7 @@ export default function TopBar({
             inputValue={inputValue}
             setInputValue={setInputValue}
             size={isMobile ? "medium" : "large"}
+            articlesProcessor={articlesProcessor}
           />
           <IconButton
             sx={{
