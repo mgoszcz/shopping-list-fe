@@ -140,14 +140,15 @@ export default function ArticlePopup({
         aria-labelledby="modal-article"
         aria-describedby="modal-article-window"
         data-articleid={article.id}
-        sx={{ minWidth: 400 }}
         ref={dialogRef}
         disableAutoFocus
+        fullWidth
+        PaperProps={{ sx: { minWidth: 300, maxWidth: "50vw" } }}
       >
         <DialogTitle>
           {article.id !== 0 ? "Edit article" : "Add article"}
         </DialogTitle>
-        <DialogContent sx={{ minWidth: 400 }}>
+        <DialogContent>
           <Box>
             <TextField
               label={"Article Name"}
