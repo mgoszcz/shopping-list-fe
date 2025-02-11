@@ -35,6 +35,8 @@ export default function ArticlePopup({
   const [isApplyDisabled, setIsApplyDisabled] = React.useState(true);
 
   useEffect(() => {
+    setArticleName("");
+    setSelectedCategory({});
     if (article.id === undefined) return;
     if (article.id === 0) {
       setArticleName(article.name);
