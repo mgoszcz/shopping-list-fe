@@ -147,7 +147,7 @@ export default function ArticlePopup({
         <DialogTitle>
           {article.id !== 0 ? "Edit article" : "Add article"}
         </DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ minWidth: 400 }}>
           <Box>
             <TextField
               label={"Article Name"}
@@ -164,19 +164,21 @@ export default function ArticlePopup({
               setSelectedCategory={setSelectedCategory}
             />
           </Box>
+          <Box>
+            <Button
+              startIcon={<Delete />}
+              variant="contained"
+              color="error"
+              disabled={article.id === 0}
+              sx={{ margin: 1 }}
+              onClick={handleToggleConfirmation}
+              ref={deleteButtonRef}
+            >
+              Remove article
+            </Button>
+          </Box>
         </DialogContent>
         <DialogActions>
-          <Button
-            startIcon={<Delete />}
-            variant="contained"
-            color="error"
-            disabled={article.id === 0}
-            sx={{ margin: 1 }}
-            onClick={handleToggleConfirmation}
-            ref={deleteButtonRef}
-          >
-            Remove article
-          </Button>
           <Box display={"flex"}>
             <Button
               variant={"contained"}
