@@ -60,13 +60,13 @@ function App() {
 
   const shoppingCartProcessor = new ShoppingCartDataProcessor(
     shoppingCart,
-    setShoppingCart,
+    setShoppingCart
   );
 
   const articlesProcessor = new ShoppingArticlesProcessor(
     articles,
     setArticles,
-    shoppingCartProcessor,
+    shoppingCartProcessor
   );
 
   return (
@@ -93,6 +93,7 @@ function App() {
           currentShop={currentShop}
           setCurrentShop={setCurrentShop}
           shopsTimestamp={shopsTimestamp}
+          shoppingCartProcessor={shoppingCartProcessor}
         />
       </div>
     </ThemeProvider>

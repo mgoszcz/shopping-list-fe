@@ -3,4 +3,5 @@ export const shoppingCartEndpoints = {
   post: `/shoppingCart`,
   put: (id) => `/shoppingCart/${id}`,
   delete: (id) => `/shoppingCart/${id}`,
+  deleteAll: `/shoppingCart`,
 };

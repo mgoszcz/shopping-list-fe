@@ -27,3 +27,23 @@ export const addShoppingCartItem = async (articleId) => {
   logger.debug(response);
   return response;
 };
+
+export const deleteUncheckedItems = async () => {
+  const response = await api.delete(shoppingCartEndpoints.deleteAll, {
+    params: {
+      unchecked: true,
+    },
+  });
+  logger.debug(response);
+  return response;
+};
+
+export const deleteCheckedItems = async () => {
+  const response = await api.delete(shoppingCartEndpoints.deleteAll, {
+    params: {
+      checked: true,
+    },
+  });
+  logger.debug(response);
+  return response;
+};

@@ -1,5 +1,6 @@
 import {
   addShoppingCartItem,
+  deleteCheckedItems,
   deleteShoppingCartItem,
   getShoppingCartData,
   updateShoppingCartItem,
@@ -22,12 +23,20 @@ export class ShoppingCartDataProcessor {
         logger.debug("Fetching ShoppingCart");
       })
       .catch((error) =>
-        logger.error("Failed to get shopping cart data", error),
+        logger.error("Failed to get shopping cart data", error)
       );
   }
 
   async getCartItemByArticleId(articleId) {
     return this.#state.find((item) => item.article.id === articleId);
+  }
+
+  getCheckedItems() {
+    return this.#state.filter((item) => item.checked);
+  }
+
+  getUncheckedItems() {
+    return this.#state.filter((item) => !item.checked);
   }
 
   async toggleChecked(cartItem) {
@@ -40,8 +49,8 @@ export class ShoppingCartDataProcessor {
           this.#state.map((item) =>
             item.id === cartItem.id
               ? { ...item, checked: newCheckedState }
-              : item,
-          ),
+              : item
+          )
         );
       })
       .catch((error) => {
@@ -67,8 +76,8 @@ export class ShoppingCartDataProcessor {
         logger.debug("Update quantity request accepted");
         this.#setState(
           this.#state.map((item) =>
-            item.id === cartItem.id ? { ...item, quantity } : item,
-          ),
+            item.id === cartItem.id ? { ...item, quantity } : item
+          )
         );
       })
       .catch((error) => {
@@ -85,6 +94,18 @@ export class ShoppingCartDataProcessor {
       })
       .catch((error) => {
         logger.error("Failed to add item: ", error);
+        return false;
+      });
+  }
+
+  async deleteAllCheckedItems() {
+    return deleteCheckedItems()
+      .then(() => {
+        logger.debug("Add cart item request accepted");
+        this.getShoppingCartItems();
+      })
+      .catch((error) => {
+        logger.error("Failed to delete all items: ", error);
         return false;
       });
   }
