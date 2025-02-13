@@ -2,6 +2,7 @@ import {
   addShoppingCartItem,
   deleteCheckedItems,
   deleteShoppingCartItem,
+  deleteUncheckedItems,
   getShoppingCartData,
   updateShoppingCartItem,
 } from "../api/shoppingCartData";
@@ -23,7 +24,7 @@ export class ShoppingCartDataProcessor {
         logger.debug("Fetching ShoppingCart");
       })
       .catch((error) =>
-        logger.error("Failed to get shopping cart data", error)
+        logger.error("Failed to get shopping cart data", error),
       );
   }
 
@@ -39,6 +40,10 @@ export class ShoppingCartDataProcessor {
     return this.#state.filter((item) => !item.checked);
   }
 
+  isEmpty() {
+    return this.#state.length === 0;
+  }
+
   async toggleChecked(cartItem) {
     const newCheckedState = !cartItem.checked;
     const data = { quantity: cartItem.quantity, checked: newCheckedState };
@@ -49,8 +54,8 @@ export class ShoppingCartDataProcessor {
           this.#state.map((item) =>
             item.id === cartItem.id
               ? { ...item, checked: newCheckedState }
-              : item
-          )
+              : item,
+          ),
         );
       })
       .catch((error) => {
@@ -76,8 +81,8 @@ export class ShoppingCartDataProcessor {
         logger.debug("Update quantity request accepted");
         this.#setState(
           this.#state.map((item) =>
-            item.id === cartItem.id ? { ...item, quantity } : item
-          )
+            item.id === cartItem.id ? { ...item, quantity } : item,
+          ),
         );
       })
       .catch((error) => {
@@ -101,11 +106,23 @@ export class ShoppingCartDataProcessor {
   async deleteAllCheckedItems() {
     return deleteCheckedItems()
       .then(() => {
-        logger.debug("Add cart item request accepted");
+        logger.debug("Delete checked items request accepted");
         this.getShoppingCartItems();
       })
       .catch((error) => {
-        logger.error("Failed to delete all items: ", error);
+        logger.error("Failed to delete checked items: ", error);
+        return false;
+      });
+  }
+
+  async deleteAllUnCheckedItems() {
+    return deleteUncheckedItems()
+      .then(() => {
+        logger.debug("Delete unchecked items request accepted");
+        this.getShoppingCartItems();
+      })
+      .catch((error) => {
+        logger.error("Failed to delete unchecked items: ", error);
         return false;
       });
   }
