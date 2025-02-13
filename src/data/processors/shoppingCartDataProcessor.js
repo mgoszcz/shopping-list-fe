@@ -1,6 +1,8 @@
 import {
   addShoppingCartItem,
+  deleteCheckedItems,
   deleteShoppingCartItem,
+  deleteUncheckedItems,
   getShoppingCartData,
   updateShoppingCartItem,
 } from "../api/shoppingCartData";
@@ -28,6 +30,18 @@ export class ShoppingCartDataProcessor {
 
   async getCartItemByArticleId(articleId) {
     return this.#state.find((item) => item.article.id === articleId);
+  }
+
+  getCheckedItems() {
+    return this.#state.filter((item) => item.checked);
+  }
+
+  getUncheckedItems() {
+    return this.#state.filter((item) => !item.checked);
+  }
+
+  isEmpty() {
+    return this.#state.length === 0;
   }
 
   async toggleChecked(cartItem) {
@@ -85,6 +99,30 @@ export class ShoppingCartDataProcessor {
       })
       .catch((error) => {
         logger.error("Failed to add item: ", error);
+        return false;
+      });
+  }
+
+  async deleteAllCheckedItems() {
+    return deleteCheckedItems()
+      .then(() => {
+        logger.debug("Delete checked items request accepted");
+        this.getShoppingCartItems();
+      })
+      .catch((error) => {
+        logger.error("Failed to delete checked items: ", error);
+        return false;
+      });
+  }
+
+  async deleteAllUnCheckedItems() {
+    return deleteUncheckedItems()
+      .then(() => {
+        logger.debug("Delete unchecked items request accepted");
+        this.getShoppingCartItems();
+      })
+      .catch((error) => {
+        logger.error("Failed to delete unchecked items: ", error);
         return false;
       });
   }

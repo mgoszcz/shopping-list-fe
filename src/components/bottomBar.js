@@ -13,16 +13,24 @@ import React, { useEffect } from "react";
 import { getShopsData } from "../data/api/shopsData";
 import logger from "../logger/logger";
 import { updateCurrentShop } from "../data/api/currentShopData";
-import { Delete, SwapVert } from "@mui/icons-material";
+import { Delete, DeleteSweep, SwapVert } from "@mui/icons-material";
+import { ConfirmationPopup } from "../popups/confirmationPopup";
 
-export const BottomBar = ({ currentShop, setCurrentShop, shopsTimestamp }) => {
+export const BottomBar = ({
+  currentShop,
+  setCurrentShop,
+  shopsTimestamp,
+  shoppingCartProcessor,
+}) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [shops, setShops] = React.useState([]);
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [needsUpdate, setNeedsUpdate] = React.useState(false);
   const [currentSelection, setCurrentSelection] = React.useState({});
+  const [deleteAllConfirmationOpen, setDeleteAllConfirmationOpen] =
+    React.useState(false);
 
   useEffect(() => {
     if (shopsTimestamp) {
@@ -72,69 +80,115 @@ export const BottomBar = ({ currentShop, setCurrentShop, shopsTimestamp }) => {
     }
   };
 
+  const handleClear = async () => {
+    logger.debug("Clear button pressed");
+    const checkedItems = shoppingCartProcessor.getCheckedItems();
+    logger.debug("Checked items: ", checkedItems);
+    if (checkedItems.length !== 0) {
+      logger.debug("Removing all checked items");
+      await shoppingCartProcessor.deleteAllCheckedItems();
+      return;
+    }
+    const uncheckedItems = shoppingCartProcessor.getUncheckedItems();
+    logger.debug("Unchecked items: ", uncheckedItems);
+    setDeleteAllConfirmationOpen(true);
+  };
+
+  const handleDeleteUnchecked = async () => {
+    logger.debug("Removing all unchecked items");
+    shoppingCartProcessor.deleteAllUnCheckedItems();
+    setDeleteAllConfirmationOpen(false);
+  };
+
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar
-        position="fixed"
-        color="primary"
-        sx={{
-          top: "auto",
-          bottom: 0,
-          minWidth: 400,
-          backgroundColor: "#3B1C32",
-          marginX: "auto",
-        }}
-      >
-        <Toolbar>
-          <Typography>{isMobile ? "0.1.0" : "Shopping List 0.1.0"}</Typography>
-          <Autocomplete
-            onOpen={handleOpen}
-            onClose={handleClose}
-            fullWidth
-            open={open}
-            loading={loading}
-            getOptionLabel={(option) => (option.name ? option.name : "")}
-            getOptionDisabled={(option) => option.id === 0}
-            value={currentSelection}
-            disableClearable
-            onChange={(event, value) => {
-              handleSelect(event, value);
-            }}
-            renderOption={(props, option) => (
-              <li {...props} key={option.id} data-id={option.id}>
-                <Typography variant={"h6"} noWrap>
-                  {option.name}
-                </Typography>
-              </li>
-            )}
-            renderInput={({ inputProps, ...rest }) => (
-              <TextField
-                {...rest}
-                label="Shop Name"
-                inputProps={{ ...inputProps, readOnly: true }}
-              />
-            )}
-            options={[...shops, { name: "Add Shop...", id: 0 }]}
-            sx={{ minWidth: 200, maxWidth: "50%", marginLeft: "auto" }}
-          />
-          <Button
-            startIcon={<SwapVert fontSize={"large"} />}
-            variant="contained"
-            disabled={true}
-            sx={{ marginX: 1, color: "white", backgroundColor: "#A64D79" }}
-          >
-            {isMobile ? "" : "Categories"}
-          </Button>
-          <Button
-            startIcon={<Delete />}
-            variant="contained"
-            disabled={true}
-            sx={{ marginX: 1, color: "white", backgroundColor: "#A64D79" }}
-          >
-            {isMobile ? "" : "Delete"}
-          </Button>
-        </Toolbar>
-      </AppBar>
-    </Box>
+    <div>
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar
+          position="fixed"
+          color="primary"
+          sx={{
+            top: "auto",
+            bottom: 0,
+            minWidth: 400,
+            backgroundColor: "#3B1C32",
+            marginX: "auto",
+          }}
+        >
+          <Toolbar>
+            <Button
+              startIcon={<DeleteSweep />}
+              variant="contained"
+              sx={{
+                marginX: 1,
+                color: "white",
+                backgroundColor: "#A64D79",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+              }}
+              size={isMobile ? "small" : "medium"}
+              onClick={handleClear}
+              disabled={shoppingCartProcessor.isEmpty()}
+            >
+              {isMobile ? "" : "Clear List"}
+            </Button>
+            <Autocomplete
+              onOpen={handleOpen}
+              onClose={handleClose}
+              fullWidth
+              open={open}
+              loading={loading}
+              getOptionLabel={(option) => (option.name ? option.name : "")}
+              getOptionDisabled={(option) => option.id === 0}
+              value={currentSelection}
+              disableClearable
+              onChange={(event, value) => {
+                handleSelect(event, value);
+              }}
+              renderOption={(props, option) => (
+                <li {...props} key={option.id} data-id={option.id}>
+                  <Typography variant={"h6"} noWrap>
+                    {option.name}
+                  </Typography>
+                </li>
+              )}
+              renderInput={({ inputProps, ...rest }) => (
+                <TextField
+                  {...rest}
+                  label="Shop Name"
+                  inputProps={{ ...inputProps, readOnly: true }}
+                />
+              )}
+              options={[...shops, { name: "Add Shop...", id: 0 }]}
+              sx={{ minWidth: 150, maxWidth: "50%", marginLeft: "auto" }}
+            />
+            <Button
+              startIcon={<SwapVert fontSize={"large"} />}
+              variant="contained"
+              disabled={true}
+              sx={{ marginX: 1, color: "white", backgroundColor: "#A64D79" }}
+              size={isMobile ? "small" : "medium"}
+            >
+              {isMobile ? "" : "Categories"}
+            </Button>
+            <Button
+              startIcon={<Delete />}
+              variant="contained"
+              disabled={true}
+              sx={{ marginX: 1, color: "white", backgroundColor: "#A64D79" }}
+              size={isMobile ? "small" : "medium"}
+            >
+              {isMobile ? "" : "Delete"}
+            </Button>
+          </Toolbar>
+        </AppBar>
+      </Box>
+      <ConfirmationPopup
+        message={"Are you sure you want to remove all shopping cart items?"}
+        onConfirm={handleDeleteUnchecked}
+        open={deleteAllConfirmationOpen}
+        setOpen={setDeleteAllConfirmationOpen}
+      />
+    </div>
   );
 };
