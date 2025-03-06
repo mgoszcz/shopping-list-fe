@@ -191,6 +191,7 @@ export const BottomBar = ({
               display={"flex"}
               justifyContent="space-between"
               alignItems="center"
+              marginX={1}
             >
               <Typography variant="body2">
                 Shopping List version {APP_VERSION}
