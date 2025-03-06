@@ -1,3 +1,4 @@
+import { synchState } from "../../constants/synchState";
 import logger from "../../logger/logger";
 import {
   createArticle,
@@ -11,26 +12,36 @@ export class ShoppingArticlesProcessor {
   state;
   #setState;
   #shoppingCartProcessor;
+  synchronizationState;
+  #setSynchronizationState;
 
-  constructor(state, setState, shoppingCartProcessor) {
+  constructor(
+    state,
+    setState,
+    shoppingCartProcessor,
+    synchState,
+    setSynchState
+  ) {
     this.state = state;
     this.#setState = setState;
     this.#shoppingCartProcessor = shoppingCartProcessor;
-  }
-
-  clearState() {
-    this.#setState([]);
+    this.synchronizationState = synchState;
+    this.#setSynchronizationState = setSynchState;
   }
 
   async getShoppingArticlesData() {
-    await getArticles()
+    this.#setState([]);
+    this.#setSynchronizationState(synchState.FETCHING);
+    getArticles()
       .then((data) => {
         this.#setState(data);
         logger.debug("Fetching ShoppingArticles");
+        this.#setSynchronizationState(synchState.SYNCHED);
       })
-      .catch((error) =>
-        logger.error("Failed to get shopping articles data", error),
-      );
+      .catch((error) => {
+        logger.error("Failed to get shopping articles data", error);
+        this.#setSynchronizationState(synchState.ERROR);
+      });
   }
 
   async getArticleById(id) {
@@ -38,6 +49,7 @@ export class ShoppingArticlesProcessor {
   }
 
   async editArticle(article, newData) {
+    this.#setSynchronizationState(synchState.SENDING);
     updateArticle(article.id, newData)
       .then(() => {
         logger.debug("Update article request accepted");
@@ -45,18 +57,22 @@ export class ShoppingArticlesProcessor {
           this.state.map((item) =>
             item.id === article.id
               ? { ...item, name: item.name, category: { id: item.category.id } }
-              : item,
-          ),
+              : item
+          )
         );
         this.#shoppingCartProcessor.getShoppingCartItems();
+        this.#setSynchronizationState(synchState.SYNCHED);
       })
       .catch((error) => {
         logger.error("Failed to update article: ", error);
+        this.#setSynchronizationState(synchState.ERROR);
       });
   }
 
   async createArticle(newArticle, addToCart = false) {
+    this.#setSynchronizationState(synchState.SENDING);
     const response = await createArticle(newArticle);
+    this.#setSynchronizationState(synchState.SYNCHED);
     const { updatedAt, createdAt, ...newArticleObject } = response.data;
     const newArticleId = newArticleObject.id;
     this.#setState([...this.state, newArticleObject]);
@@ -72,11 +88,14 @@ export class ShoppingArticlesProcessor {
       if (shoppingCartItems) {
         await this.#shoppingCartProcessor.deleteCartItem(shoppingCartItems);
       }
+      this.#setSynchronizationState(synchState.SENDING);
       await deleteArticle(article.id);
       logger.debug("Delete article request accepted");
       this.#setState(this.state.filter((item) => item.id !== article.id));
+      this.#setSynchronizationState(synchState.SYNCHED);
     } catch (error) {
       logger.error("Failed to delete article: ", error);
+      this.#setSynchronizationState(synchState.ERROR);
     }
   }
 }
