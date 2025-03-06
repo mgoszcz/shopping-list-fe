@@ -10,6 +10,8 @@ import logger from "./logger/logger";
 import TopBar from "./components/topBar";
 import { BottomBar } from "./components/bottomBar";
 import { ShoppingArticlesProcessor } from "./data/processors/shoppingArticlesProcessor";
+import { synchState } from "./constants/synchState";
+import { ProgressOverlay } from "./components/progressOverlay";
 
 const darkTheme = createTheme({
   palette: {
@@ -18,15 +20,29 @@ const darkTheme = createTheme({
 });
 
 function App() {
+  // Timestamp states
   const [shoppingCartTimestamp, setShoppingCartTimestamp] = useState([]);
   const [currentShopTimestamp, setCurrentShopTimestamp] = useState([]);
   const [articlesTimestamp, setArticlesTimestamp] = useState([]);
   const [shopsTimestamp, setShopsTimestamp] = useState([]);
+
+  // Data states
   const [shoppingCart, setShoppingCart] = useState([]);
   const [currentShop, setCurrentShop] = useState({});
-  const [articlePopupOpen, setArticlePopupOpen] = useState(false);
   const [articles, setArticles] = useState([]);
+
+  // Synchronization states
+  const [articlesSynchState, setArticlesSyncState] = useState(
+    synchState.UNKNOWN
+  );
+  const [shoppingCartSyncState, setShoppingCartSyncState] = useState(
+    synchState.UNKNOWN
+  );
+
+  // Other states
+  const [articlePopupOpen, setArticlePopupOpen] = useState(false);
   const [editingArticle, setEditingArticle] = useState({});
+  const [sendingData, setSendingData] = useState(false);
 
   useEffect(() => {
     const fetchTimestampData = async () =>
@@ -50,6 +66,10 @@ function App() {
   }, [shoppingCartTimestamp, currentShop]);
 
   useEffect(() => {
+    articlesProcessor.getShoppingArticlesData();
+  }, [articlesTimestamp]);
+
+  useEffect(() => {
     getCurrentShop()
       .then((data) => {
         setCurrentShop(data);
@@ -58,15 +78,30 @@ function App() {
       .catch((error) => logger.error("Failed to get current shop", error));
   }, [currentShopTimestamp]);
 
+  useEffect(() => {
+    if (
+      articlesSynchState === synchState.SENDING ||
+      shoppingCartSyncState === synchState.SENDING
+    ) {
+      setSendingData(true);
+    } else {
+      setSendingData(false);
+    }
+  });
+
   const shoppingCartProcessor = new ShoppingCartDataProcessor(
     shoppingCart,
-    setShoppingCart
+    setShoppingCart,
+    shoppingCartSyncState,
+    setShoppingCartSyncState
   );
 
   const articlesProcessor = new ShoppingArticlesProcessor(
     articles,
     setArticles,
-    shoppingCartProcessor
+    shoppingCartProcessor,
+    articlesSynchState,
+    setArticlesSyncState
   );
 
   return (
@@ -94,7 +129,10 @@ function App() {
           setCurrentShop={setCurrentShop}
           shopsTimestamp={shopsTimestamp}
           shoppingCartProcessor={shoppingCartProcessor}
+          shoppingCartSyncState={shoppingCartSyncState}
+          articlesSyncState={articlesSynchState}
         />
+        <ProgressOverlay loading={sendingData} />
       </div>
     </ThemeProvider>
   );

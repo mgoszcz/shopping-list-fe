@@ -15,12 +15,16 @@ import logger from "../logger/logger";
 import { updateCurrentShop } from "../data/api/currentShopData";
 import { Delete, DeleteSweep, SwapVert } from "@mui/icons-material";
 import { ConfirmationPopup } from "../popups/confirmationPopup";
+import SynchronizationStatusBar from "./synchronizationStatusBar";
+import { APP_VERSION } from "../constants/version";
 
 export const BottomBar = ({
   currentShop,
   setCurrentShop,
   shopsTimestamp,
   shoppingCartProcessor,
+  shoppingCartSyncState,
+  articlesSyncState,
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -115,6 +119,7 @@ export const BottomBar = ({
           }}
         >
           <Toolbar>
+            <Box></Box>
             <Button
               startIcon={<DeleteSweep />}
               variant="contained"
@@ -181,8 +186,26 @@ export const BottomBar = ({
               {isMobile ? "" : "Delete"}
             </Button>
           </Toolbar>
+          <footer>
+            <Box
+              display={"flex"}
+              justifyContent="space-between"
+              alignItems="center"
+              marginX={1}
+            >
+              <Typography variant="body2">
+                Shopping List version {APP_VERSION}
+              </Typography>
+              <SynchronizationStatusBar
+                articlesState={articlesSyncState}
+                shoppingCartState={shoppingCartSyncState}
+                display={"flex"}
+              />
+            </Box>
+          </footer>
         </AppBar>
       </Box>
+
       <ConfirmationPopup
         message={"Are you sure you want to remove all shopping cart items?"}
         onConfirm={handleDeleteUnchecked}

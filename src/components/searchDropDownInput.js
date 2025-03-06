@@ -3,6 +3,7 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useEffect, useState } from "react";
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { synchState } from "../constants/synchState";
 
 const removeDiacritics = require("diacritics").remove;
 
@@ -10,12 +11,11 @@ const isArticleInCart = (article, shoppingCart) => {
   return shoppingCart.some(
     (item) =>
       item.article.name === article.name &&
-      item.category.name === article.category.name,
+      item.category.name === article.category.name
   );
 };
 
 export default function SearchDropDownInput({
-  articlesTimestamp,
   inputValue,
   setInputValue,
   setSearchItem,
@@ -28,27 +28,18 @@ export default function SearchDropDownInput({
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [needsUpdate, setNeedsUpdate] = useState(false);
-
-  useEffect(() => {
-    if (articlesTimestamp) {
-      setNeedsUpdate(true);
-    }
-  }, [articlesTimestamp]);
 
   const handleOpen = () => {
     setOpen(true);
-    if (!needsUpdate) {
-      return;
-    }
-    articlesProcessor.clearState();
-    (async () => {
-      setLoading(true);
-      await articlesProcessor.getShoppingArticlesData();
-      setLoading(false);
-      setNeedsUpdate(false);
-    })();
   };
+
+  useEffect(() => {
+    if (articlesProcessor.synchronizationState === synchState.FETCHING) {
+      setLoading(true);
+    } else {
+      setLoading(false);
+    }
+  });
 
   const handleClose = () => {
     setOpen(false);
@@ -64,14 +55,14 @@ export default function SearchDropDownInput({
     const existingArticle = articlesProcessor.state.find(
       (article) =>
         removeDiacritics(article.name.toLowerCase()) ===
-        removeDiacritics(newValue.toLowerCase()),
+        removeDiacritics(newValue.toLowerCase())
     );
     if (existingArticle) {
       if (
         shoppingCart.some(
           (item) =>
             item.article.name === existingArticle.name &&
-            item.category.name === existingArticle.category.name,
+            item.category.name === existingArticle.category.name
         )
       ) {
         setAddButtonDisabled(true);
@@ -103,7 +94,7 @@ export default function SearchDropDownInput({
       filterOptions={(options, { inputValue }) => {
         const normalizedInput = removeDiacritics(inputValue.toLowerCase());
         return options.filter((option) =>
-          removeDiacritics(option.name.toLowerCase()).includes(normalizedInput),
+          removeDiacritics(option.name.toLowerCase()).includes(normalizedInput)
         );
       }}
       inputValue={inputValue}
