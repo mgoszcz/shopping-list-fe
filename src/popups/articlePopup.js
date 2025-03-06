@@ -16,6 +16,7 @@ import {
   Popper,
 } from "@mui/material";
 import { CategorySelector } from "../components/categorySelector";
+import { ProgressOverlay } from "../components/progressOverlay";
 
 export default function ArticlePopup({
   open,
@@ -33,6 +34,7 @@ export default function ArticlePopup({
   const dialogRef = React.useRef(null);
   const [originalArticleName, setOriginalArticleName] = React.useState("");
   const [isApplyDisabled, setIsApplyDisabled] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
 
   useEffect(() => {
     setArticleName("");
@@ -45,12 +47,14 @@ export default function ArticlePopup({
       return;
     }
     (async () => {
+      setLoading(true);
       const fetchedArticle = await articlesProcessor.getArticleById(article.id);
       const fetchedCategories = await getCategoriesData();
       setCategories(fetchedCategories);
       setArticleName(fetchedArticle.name);
       setOriginalArticleName(fetchedArticle.name);
       setSelectedCategory(fetchedArticle.category);
+      setLoading(false);
     })();
   }, [article]);
 
@@ -136,6 +140,7 @@ export default function ArticlePopup({
 
   return (
     <div>
+      <ProgressOverlay loading={loading} className="progress-overlay" />
       <Dialog
         open={open}
         onClose={handleClose}

@@ -1,6 +1,6 @@
 import { Box, CircularProgress, Tooltip } from "@mui/material";
 import { synchState } from "../constants/synchState";
-import { Done, Help, Error } from "@mui/icons-material";
+import { Help, Error, CheckCircle } from "@mui/icons-material";
 import logger from "../logger/logger";
 
 const getIcon = (state, dataName) => {
@@ -26,7 +26,7 @@ const getIcon = (state, dataName) => {
     case synchState.SYNCHED:
       return (
         <Tooltip title={`${dataName} is up to date`} color="green">
-          <Done fontSize="small" sx={{ fill: "green" }} />
+          <CheckCircle fontSize="small" sx={{ fill: "green" }} />
         </Tooltip>
       );
     case synchState.ERROR:

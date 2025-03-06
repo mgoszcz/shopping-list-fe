@@ -11,6 +11,7 @@ import TopBar from "./components/topBar";
 import { BottomBar } from "./components/bottomBar";
 import { ShoppingArticlesProcessor } from "./data/processors/shoppingArticlesProcessor";
 import { synchState } from "./constants/synchState";
+import { ProgressOverlay } from "./components/progressOverlay";
 
 const darkTheme = createTheme({
   palette: {
@@ -41,6 +42,7 @@ function App() {
   // Other states
   const [articlePopupOpen, setArticlePopupOpen] = useState(false);
   const [editingArticle, setEditingArticle] = useState({});
+  const [sendingData, setSendingData] = useState(false);
 
   useEffect(() => {
     const fetchTimestampData = async () =>
@@ -75,6 +77,17 @@ function App() {
       })
       .catch((error) => logger.error("Failed to get current shop", error));
   }, [currentShopTimestamp]);
+
+  useEffect(() => {
+    if (
+      articlesSynchState === synchState.SENDING ||
+      shoppingCartSyncState === synchState.SENDING
+    ) {
+      setSendingData(true);
+    } else {
+      setSendingData(false);
+    }
+  });
 
   const shoppingCartProcessor = new ShoppingCartDataProcessor(
     shoppingCart,
@@ -119,6 +132,7 @@ function App() {
           shoppingCartSyncState={shoppingCartSyncState}
           articlesSyncState={articlesSynchState}
         />
+        <ProgressOverlay loading={sendingData} />
       </div>
     </ThemeProvider>
   );
