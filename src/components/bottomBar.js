@@ -18,6 +18,22 @@ import { ConfirmationPopup } from "../popups/confirmationPopup";
 import SynchronizationStatusBar from "./synchronizationStatusBar";
 import { APP_VERSION } from "../constants/version";
 
+const ENVIRONMENT = process.env.REACT_APP_ENVIRONMENT;
+
+const getColor = () => {
+  switch (ENVIRONMENT) {
+    case "local":
+      return "darkred";
+
+    case "development":
+      return "darkorange";
+
+    case "production": {
+      return "";
+    }
+  }
+};
+
 export const BottomBar = ({
   currentShop,
   setCurrentShop,
@@ -192,9 +208,11 @@ export const BottomBar = ({
               justifyContent="space-between"
               alignItems="center"
               marginX={1}
+              backgroundColor={getColor()}
             >
               <Typography variant="body2">
-                Shopping List version {APP_VERSION}
+                Shopping List version {APP_VERSION}{" "}
+                {ENVIRONMENT === "production" ? "" : ENVIRONMENT}
               </Typography>
               <SynchronizationStatusBar
                 articlesState={articlesSyncState}
