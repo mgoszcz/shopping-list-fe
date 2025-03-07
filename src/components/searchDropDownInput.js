@@ -28,6 +28,7 @@ export default function SearchDropDownInput({
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [dropdownSelection, setDropdownSelection] = useState(null);
 
   const handleOpen = () => {
     setOpen(true);
@@ -40,6 +41,10 @@ export default function SearchDropDownInput({
       setLoading(false);
     }
   });
+
+  useEffect(() => {
+    setDropdownSelection(null);
+  }, [inputValue]);
 
   const handleClose = () => {
     setOpen(false);
@@ -91,6 +96,7 @@ export default function SearchDropDownInput({
       id="search-article"
       disableClearable
       getOptionLabel={(option) => option.name}
+      value={dropdownSelection}
       filterOptions={(options, { inputValue }) => {
         const normalizedInput = removeDiacritics(inputValue.toLowerCase());
         return options.filter((option) =>
