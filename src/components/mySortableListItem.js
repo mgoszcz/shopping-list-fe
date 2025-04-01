@@ -3,7 +3,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import CategoryOrderListItem from "./categoryOrderListItem";
 
-export function MySortableListItem({ item, ...props }) {
+export function MySortableListItem({ item, handleDelete, ...props }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: item.id });
 
@@ -16,6 +16,7 @@ export function MySortableListItem({ item, ...props }) {
     <CategoryOrderListItem
       ref={setNodeRef}
       style={style}
+      handleDelete={handleDelete}
       {...attributes}
       {...listeners}
       item={item}

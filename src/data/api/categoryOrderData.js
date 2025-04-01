@@ -7,3 +7,9 @@ export const getCategoryOrderData = async (shopId) => {
   logger.debug(response);
   return response.data;
 };
+
+export const setCategoryOrderData = async (shopId, orderData) => {
+  const response = await api.put(categoryOrderEndpoint.put(shopId), orderData);
+  logger.debug(response);
+  return response;
+};

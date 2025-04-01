@@ -10,29 +10,38 @@ import {
   IconButton,
   useMediaQuery,
 } from "@mui/material";
-import { getCategoryOrderData } from "../data/api/categoryOrderData";
+import {
+  getCategoryOrderData,
+  setCategoryOrderData,
+} from "../data/api/categoryOrderData";
 import { getCategoriesData } from "../data/api/categoriesData";
 import { CategorySelector } from "../components/categorySelector";
 import { Add, PlaylistAddRounded } from "@mui/icons-material";
 import { useTheme } from "@emotion/react";
 import CategoryOrderListDnd from "../components/categoryOrderListDnd";
 
-export default function CategoryOrderPopup({ open, setOpen, shop }) {
+export default function CategoryOrderPopup({
+  open,
+  setOpen,
+  shop,
+  shoppingCartProcessor,
+}) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleClose = () => setOpen(false);
 
-  const handleUpdate = () => {};
   const [isApplyDisabled, setIsApplyDisabled] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
   const [categoryOrder, setCategoryOrder] = React.useState([]);
   const [categories, setCategories] = React.useState([]);
   const [unusedCategories, setUnusedCategories] = React.useState([]);
   const [categoryToAdd, setCategoryToAdd] = React.useState([]);
+  const [currentOrderList, setCurrentOrderList] = React.useState([]);
 
   useEffect(() => {
     if (!open) return;
+    setIsApplyDisabled(true);
     setLoading(true);
     (async () => {
       const orderData = await getCategoryOrderData(shop.shop_id);
@@ -42,18 +51,53 @@ export default function CategoryOrderPopup({ open, setOpen, shop }) {
   }, [open]);
 
   useEffect(() => {
-    console.log(categories);
+    const itemsList = [...categoryOrder];
+    itemsList.sort((a, b) => a.category_order - b.category_order);
+    setCurrentOrderList(
+      itemsList.map((item) => {
+        return { title: item.category.name, id: item.category.id };
+      })
+    );
+  }, [categoryOrder]);
+
+  useEffect(() => {
     const remainingCategories = categories.filter(
       (item) =>
-        !categoryOrder.find(
-          (orderItem) => orderItem.category.name === item.name
-        )
+        !currentOrderList.find((orderItem) => orderItem.title === item.name)
     );
-    console.log(remainingCategories);
     setUnusedCategories(remainingCategories);
-  }, [categories, categoryOrder]);
+  }, [categories, currentOrderList]);
 
-  const handleAddButtonClick = () => {};
+  const handleAddButtonClick = () => {
+    setCurrentOrderList([
+      {
+        title: categoryToAdd.name,
+        id: categoryToAdd.id,
+      },
+      ...currentOrderList,
+    ]);
+    setIsApplyDisabled(false);
+    setCategoryToAdd({});
+  };
+
+  const handleApply = () => {
+    const newOrder = [];
+    for (const [index, item] of currentOrderList.entries()) {
+      newOrder.push({
+        category: { id: item.id, name: item.title },
+        category_order: index + 1,
+      });
+    }
+    setCategoryOrderData(shop.shop_id, newOrder)
+      .then(() => {
+        setCategoryOrder(newOrder);
+        shoppingCartProcessor.getShoppingCartItems();
+      })
+      .catch((error) =>
+        console.error(`Failed to set category order: ${error}`)
+      );
+    handleClose();
+  };
 
   return (
     <div>
@@ -91,7 +135,11 @@ export default function CategoryOrderPopup({ open, setOpen, shop }) {
               <PlaylistAddRounded fontSize={"inherit"} />
             </IconButton>
           </Box>
-          <CategoryOrderListDnd orderList={categoryOrder} />
+          <CategoryOrderListDnd
+            orderList={currentOrderList}
+            setOrderList={setCurrentOrderList}
+            setApplyDisabled={setIsApplyDisabled}
+          />
         </DialogContent>
         <DialogActions>
           <Box display={"flex"}>
@@ -99,7 +147,7 @@ export default function CategoryOrderPopup({ open, setOpen, shop }) {
               variant={"contained"}
               type={"submit"}
               sx={{ margin: 1, width: 100, backgroundColor: "#A64D79" }}
-              onClick={handleUpdate}
+              onClick={handleApply}
               disabled={isApplyDisabled}
             >
               Apply

@@ -18,22 +18,34 @@ import MySortableListItem from "./mySortableListItem";
 import CategoryOrderListItem from "./categoryOrderListItem";
 import { List, Paper } from "@mui/material";
 
-export default function CategoryOrderListDnd({ orderList }) {
-  const [activeItem, setActiveItem] = useState({});
-  const [items, setItems] = useState([]);
+class MyPointerSensor extends PointerSensor {
+  static activators = [
+    {
+      eventName: "onPointerDown",
+      handler: ({ nativeEvent: event }) => {
+        if (
+          !event.isPrimary ||
+          event.button !== 0 ||
+          event.target.closest(".MuiIconButton-root")
+        ) {
+          return false;
+        }
 
-  useEffect(() => {
-    const itemsList = [...orderList];
-    itemsList.sort((a, b) => a.category_order - b.category_order);
-    setItems(
-      itemsList.map((item) => {
-        return { title: item.category.name, id: item.category.id };
-      })
-    );
-  }, [orderList]);
+        return true;
+      },
+    },
+  ];
+}
+
+export default function CategoryOrderListDnd({
+  orderList,
+  setOrderList,
+  setApplyDisabled,
+}) {
+  const [activeItem, setActiveItem] = useState({});
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(MyPointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -41,7 +53,7 @@ export default function CategoryOrderListDnd({ orderList }) {
 
   function handleDragStart(event) {
     const { active } = event;
-    const activeItem = items.find((item) => item.id === active.id);
+    const activeItem = orderList.find((item) => item.id === active.id);
     if (activeItem) {
       setActiveItem(activeItem);
     }
@@ -51,15 +63,24 @@ export default function CategoryOrderListDnd({ orderList }) {
     const { active, over } = event;
 
     if (active.id !== over.id) {
-      setItems((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
+      setOrderList((orderList) => {
+        const oldIndex = orderList.findIndex((item) => item.id === active.id);
+        const newIndex = orderList.findIndex((item) => item.id === over.id);
 
-        return arrayMove(items, oldIndex, newIndex);
+        return arrayMove(orderList, oldIndex, newIndex);
       });
+      setApplyDisabled(false);
     }
 
     setActiveItem(null);
+  }
+
+  function handleDelete(event) {
+    const categoryId = parseInt(
+      event.target.closest(".delete-category").getAttribute("category-id")
+    );
+    setOrderList(orderList.filter((item) => item.id !== categoryId));
+    setApplyDisabled(false);
   }
 
   return (
@@ -71,9 +92,16 @@ export default function CategoryOrderListDnd({ orderList }) {
     >
       <Paper sx={{ m: 4 }}>
         <List>
-          <SortableContext items={items} strategy={verticalListSortingStrategy}>
-            {items.map((item) => (
-              <MySortableListItem key={item.id} item={item} />
+          <SortableContext
+            items={orderList}
+            strategy={verticalListSortingStrategy}
+          >
+            {orderList.map((item) => (
+              <MySortableListItem
+                key={item.id}
+                item={item}
+                handleDelete={handleDelete}
+              />
             ))}
           </SortableContext>
           <DragOverlay>

@@ -96,7 +96,12 @@ export const BottomBar = ({
       logger.debug("Select new current shop");
       updateCurrentShop(shopId)
         .then(() => {
-          setCurrentShop(shops.find((shop) => shop.id === shopId));
+          const shop = shops.find((shop) => shop.id === shopId);
+          setCurrentShop({
+            logo: shop.logo,
+            name: shop.name,
+            shop_id: shop.id,
+          });
           logger.debug("Current shop selected");
         })
         .catch((error) => logger.error("Failed to select current shop", error));
@@ -240,6 +245,7 @@ export const BottomBar = ({
         open={categoryOrderWindowOpen}
         setOpen={setCategoryOrderWindowOpen}
         shop={currentShop}
+        shoppingCartProcessor={shoppingCartProcessor}
       />
     </div>
   );
