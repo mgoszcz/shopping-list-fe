@@ -54,7 +54,11 @@ export const CategorySelector = ({
         if (newCategory) {
           setSelectedCategory(newCategory);
         } else {
-          setSelectedCategory({ name: newInputValue });
+          if (freeSoloEnabled) {
+            setSelectedCategory({ name: newInputValue });
+          } else {
+            setSelectedCategory({});
+          }
         }
       }}
       renderInput={(params) => (

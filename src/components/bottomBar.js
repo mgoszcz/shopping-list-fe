@@ -54,6 +54,8 @@ export const BottomBar = ({
     React.useState(false);
   const [categoryOrderWindowOpen, setCategoryOrderWindowOpen] =
     React.useState(false);
+  const [categoryOrderDisabled, setCategoryOrderDisabled] =
+    React.useState(true);
 
   useEffect(() => {
     if (shopsTimestamp) {
@@ -62,10 +64,12 @@ export const BottomBar = ({
   }, [shopsTimestamp]);
 
   useEffect(() => {
-    if (currentShop) {
+    if (currentShop.shop_id !== null) {
       setCurrentSelection(currentShop);
+      setCategoryOrderDisabled(false);
     } else {
       setCurrentSelection({});
+      setCategoryOrderDisabled(true);
     }
   }, [currentShop]);
 
@@ -194,7 +198,7 @@ export const BottomBar = ({
             <Button
               startIcon={<SwapVert fontSize={"large"} />}
               variant="contained"
-              disabled={false}
+              disabled={categoryOrderDisabled}
               sx={{ marginX: 1, color: "white", backgroundColor: "#A64D79" }}
               onClick={() => {
                 setCategoryOrderWindowOpen(true);

@@ -19,6 +19,7 @@ import { CategorySelector } from "../components/categorySelector";
 import { Add, PlaylistAddRounded } from "@mui/icons-material";
 import { useTheme } from "@emotion/react";
 import CategoryOrderListDnd from "../components/categoryOrderListDnd";
+import { isObjectEmpty } from "../utils/isObjectEmpty";
 
 export default function CategoryOrderPopup({
   open,
@@ -32,11 +33,13 @@ export default function CategoryOrderPopup({
   const handleClose = () => setOpen(false);
 
   const [isApplyDisabled, setIsApplyDisabled] = React.useState(true);
+  const [isAddCategoryDisabled, setIsAddCategoryDisabled] =
+    React.useState(true);
   const [loading, setLoading] = React.useState(false);
   const [categoryOrder, setCategoryOrder] = React.useState([]);
   const [categories, setCategories] = React.useState([]);
   const [unusedCategories, setUnusedCategories] = React.useState([]);
-  const [categoryToAdd, setCategoryToAdd] = React.useState([]);
+  const [categoryToAdd, setCategoryToAdd] = React.useState({});
   const [currentOrderList, setCurrentOrderList] = React.useState([]);
 
   useEffect(() => {
@@ -67,6 +70,14 @@ export default function CategoryOrderPopup({
     );
     setUnusedCategories(remainingCategories);
   }, [categories, currentOrderList]);
+
+  useEffect(() => {
+    if (isObjectEmpty(categoryToAdd)) {
+      setIsAddCategoryDisabled(true);
+    } else {
+      setIsAddCategoryDisabled(false);
+    }
+  }, [categoryToAdd]);
 
   const handleAddButtonClick = () => {
     setCurrentOrderList([
@@ -130,7 +141,7 @@ export default function CategoryOrderPopup({
               }}
               size={isMobile ? "medium" : "large"}
               onClick={handleAddButtonClick}
-              disabled={false}
+              disabled={isAddCategoryDisabled}
             >
               <PlaylistAddRounded fontSize={"inherit"} />
             </IconButton>
