@@ -17,6 +17,7 @@ import { Delete, DeleteSweep, SwapVert } from "@mui/icons-material";
 import { ConfirmationPopup } from "../popups/confirmationPopup";
 import SynchronizationStatusBar from "./synchronizationStatusBar";
 import { APP_VERSION } from "../constants/version";
+import CategoryOrderPopup from "../popups/categoryOrderPopup";
 
 const ENVIRONMENT = process.env.REACT_APP_ENVIRONMENT;
 
@@ -51,6 +52,10 @@ export const BottomBar = ({
   const [currentSelection, setCurrentSelection] = React.useState({});
   const [deleteAllConfirmationOpen, setDeleteAllConfirmationOpen] =
     React.useState(false);
+  const [categoryOrderWindowOpen, setCategoryOrderWindowOpen] =
+    React.useState(false);
+  const [categoryOrderDisabled, setCategoryOrderDisabled] =
+    React.useState(true);
 
   useEffect(() => {
     if (shopsTimestamp) {
@@ -59,10 +64,12 @@ export const BottomBar = ({
   }, [shopsTimestamp]);
 
   useEffect(() => {
-    if (currentShop) {
+    if (currentShop.shop_id !== null) {
       setCurrentSelection(currentShop);
+      setCategoryOrderDisabled(false);
     } else {
       setCurrentSelection({});
+      setCategoryOrderDisabled(true);
     }
   }, [currentShop]);
 
@@ -93,7 +100,12 @@ export const BottomBar = ({
       logger.debug("Select new current shop");
       updateCurrentShop(shopId)
         .then(() => {
-          setCurrentShop(shops.find((shop) => shop.id === shopId));
+          const shop = shops.find((shop) => shop.id === shopId);
+          setCurrentShop({
+            logo: shop.logo,
+            name: shop.name,
+            shop_id: shop.id,
+          });
           logger.debug("Current shop selected");
         })
         .catch((error) => logger.error("Failed to select current shop", error));
@@ -186,8 +198,11 @@ export const BottomBar = ({
             <Button
               startIcon={<SwapVert fontSize={"large"} />}
               variant="contained"
-              disabled={true}
+              disabled={categoryOrderDisabled}
               sx={{ marginX: 1, color: "white", backgroundColor: "#A64D79" }}
+              onClick={() => {
+                setCategoryOrderWindowOpen(true);
+              }}
               size={isMobile ? "small" : "medium"}
             >
               {isMobile ? "" : "Categories"}
@@ -229,6 +244,12 @@ export const BottomBar = ({
         onConfirm={handleDeleteUnchecked}
         open={deleteAllConfirmationOpen}
         setOpen={setDeleteAllConfirmationOpen}
+      />
+      <CategoryOrderPopup
+        open={categoryOrderWindowOpen}
+        setOpen={setCategoryOrderWindowOpen}
+        shop={currentShop}
+        shoppingCartProcessor={shoppingCartProcessor}
       />
     </div>
   );

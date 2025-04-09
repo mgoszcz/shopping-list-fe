@@ -170,6 +170,7 @@ export default function ArticlePopup({
               setCategories={setCategories}
               selectedCategory={selectedCategory}
               setSelectedCategory={setSelectedCategory}
+              freeSoloEnabled={true}
             />
           </Box>
           <Box>

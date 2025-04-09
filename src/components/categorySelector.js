@@ -8,6 +8,7 @@ export const CategorySelector = ({
   setCategories,
   selectedCategory,
   setSelectedCategory,
+  freeSoloEnabled,
 }) => {
   const [openAutocomplete, setOpenAutocomplete] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -30,7 +31,7 @@ export const CategorySelector = ({
     <Autocomplete
       id="category-select"
       fullWidth
-      freeSolo
+      freeSolo={freeSoloEnabled}
       onOpen={handleOpenAutocomplete}
       onClose={handleCloseAutocomplete}
       loading={loading}
@@ -48,12 +49,16 @@ export const CategorySelector = ({
           return;
         }
         const newCategory = categories.find(
-          (category) => category.name === newInputValue,
+          (category) => category.name === newInputValue
         );
         if (newCategory) {
           setSelectedCategory(newCategory);
         } else {
-          setSelectedCategory({ name: newInputValue });
+          if (freeSoloEnabled) {
+            setSelectedCategory({ name: newInputValue });
+          } else {
+            setSelectedCategory({});
+          }
         }
       }}
       renderInput={(params) => (
