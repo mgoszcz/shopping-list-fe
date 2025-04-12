@@ -10,6 +10,7 @@ import {
 import { Delete, Edit } from "@mui/icons-material";
 import "../index.css";
 import IconButton from "@mui/material/IconButton";
+import { useEffect, useState } from "react";
 
 const ShoppingCartCard = ({
   cartItem,
@@ -20,6 +21,13 @@ const ShoppingCartCard = ({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const backgroundColor = cartItem.checked ? "#0F0F0F" : "#6A1E55";
+
+  const [isSorted, setIsSorted] = useState(true);
+
+  useEffect(() => {
+    setIsSorted(cartItem.sorted);
+  }, [cartItem]);
+
   return (
     <Paper
       elevation={3}
@@ -33,7 +41,13 @@ const ShoppingCartCard = ({
       <Box
         display={"flex"}
         alignItems={"center"}
-        sx={{ height: { xs: 75, sm: 100 } }}
+        sx={{
+          height: { xs: 75, sm: 100 },
+          border: isSorted ? 0 : 5,
+          borderStyle: "dashed",
+          borderColor: "#BE1E55",
+          borderRadius: "5px",
+        }}
         marginY={1}
       >
         <CardActionArea
