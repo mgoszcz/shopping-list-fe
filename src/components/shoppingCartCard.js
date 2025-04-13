@@ -1,13 +1,15 @@
 import {
   Box,
   CardActionArea,
+  ClickAwayListener,
   Input,
   Paper,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
+import { Delete, Edit, Report, SwapVert } from "@mui/icons-material";
 import "../index.css";
 import IconButton from "@mui/material/IconButton";
 import { useEffect, useState } from "react";
@@ -23,6 +25,15 @@ const ShoppingCartCard = ({
   const backgroundColor = cartItem.checked ? "#0F0F0F" : "#6A1E55";
 
   const [isSorted, setIsSorted] = useState(true);
+  const [open, setOpen] = useState(false);
+
+  const handleTooltipClose = () => {
+    setOpen(false);
+  };
+
+  const handleTooltipOpen = () => {
+    setOpen(true);
+  };
 
   useEffect(() => {
     setIsSorted(cartItem.sorted);
@@ -52,7 +63,7 @@ const ShoppingCartCard = ({
       >
         <CardActionArea
           onClick={() => shoppingCartProcessor.toggleChecked(cartItem)}
-          sx={{ maxWidth: isMobile ? "65%" : "70%" }}
+          sx={{ maxWidth: isMobile ? (isSorted ? "58%" : "55%") : "70%" }}
         >
           <Box
             display={"flex"}
@@ -83,6 +94,33 @@ const ShoppingCartCard = ({
         </CardActionArea>
 
         <Box display={"flex"} marginLeft={"auto"} alignItems={"center"}>
+          <ClickAwayListener onClickAway={handleTooltipClose}>
+            <div>
+              <Tooltip
+                onClose={handleTooltipClose}
+                open={open}
+                disableFocusListener
+                disableHoverListener
+                disableTouchListener
+                title={
+                  <>
+                    Category is not ordered in current shop. To order go to the
+                    bottom bar and click on button{" "}
+                    <SwapVert fontSize={"small"} />
+                  </>
+                }
+                slotProps={{
+                  popper: {
+                    disablePortal: true,
+                  },
+                }}
+              >
+                <IconButton disabled={isSorted} onClick={handleTooltipOpen}>
+                  <Report sx={{ opacity: isSorted ? 0 : 100, fill: "red" }} />
+                </IconButton>
+              </Tooltip>
+            </div>
+          </ClickAwayListener>
           <Input
             type="number"
             id="amount-input"
@@ -91,6 +129,7 @@ const ShoppingCartCard = ({
             sx={{
               width: 25,
               marginRight: 1,
+              marginLeft: 1,
             }}
             value={cartItem.quantity}
             onChange={(e) =>
