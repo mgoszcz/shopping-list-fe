@@ -18,6 +18,7 @@ import { ConfirmationPopup } from "../popups/confirmationPopup";
 import SynchronizationStatusBar from "./synchronizationStatusBar";
 import { APP_VERSION } from "../constants/version";
 import CategoryOrderPopup from "../popups/categoryOrderPopup";
+import AddShopPopup from "../popups/addShopPopup";
 
 const ENVIRONMENT = process.env.REACT_APP_ENVIRONMENT;
 
@@ -56,6 +57,7 @@ export const BottomBar = ({
     React.useState(false);
   const [categoryOrderDisabled, setCategoryOrderDisabled] =
     React.useState(true);
+  const [addShopPopupOpen, setAddShopPopupOpen] = React.useState(false);
 
   useEffect(() => {
     if (shopsTimestamp) {
@@ -96,6 +98,7 @@ export const BottomBar = ({
     const shopId = value.id;
     if (shopId === 0) {
       logger.debug("Handle adding new shop");
+      setAddShopPopupOpen(true);
     } else {
       logger.debug("Select new current shop");
       updateCurrentShop(shopId)
@@ -172,7 +175,7 @@ export const BottomBar = ({
               open={open}
               loading={loading}
               getOptionLabel={(option) => (option.name ? option.name : "")}
-              getOptionDisabled={(option) => option.id === 0}
+              // getOptionDisabled={(option) => option.id === 0}
               value={currentSelection}
               disableClearable
               onChange={(event, value) => {
@@ -250,6 +253,12 @@ export const BottomBar = ({
         setOpen={setCategoryOrderWindowOpen}
         shop={currentShop}
         shoppingCartProcessor={shoppingCartProcessor}
+      />
+      <AddShopPopup
+        open={addShopPopupOpen}
+        setOpen={setAddShopPopupOpen}
+        shops={shops}
+        setShops={setShops}
       />
     </div>
   );
