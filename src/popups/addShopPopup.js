@@ -8,11 +8,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-// TODO set size of dialog, to be not resized when adding error
 // TODO set red color of error
-// TODO clear text field when opening dialog
 
 export default function AddShopPopup({ open, setOpen, shops, setShops }) {
   const handleClose = () => setOpen(false);
@@ -22,12 +20,12 @@ export default function AddShopPopup({ open, setOpen, shops, setShops }) {
   const [isApplyDisabled, setIsApplyDisabled] = useState(true);
 
   useEffect(() => {
-    if (newName === "") {
+    if (open) {
+      setErrorMessage(" ");
+      setNewName("");
       setIsApplyDisabled(true);
-    } else {
-      setIsApplyDisabled(false);
     }
-  }, [newName]);
+  }, [open]);
 
   const handleCreate = () => {
     if (shops.find((shop) => newName === shop.name)) {
@@ -38,12 +36,29 @@ export default function AddShopPopup({ open, setOpen, shops, setShops }) {
     handleClose();
   };
 
+  const handleChange = (e) => {
+    const name = e.target.value;
+    setNewName(name);
+    if (shops.find((shop) => name === shop.name)) {
+      setErrorMessage(`Shop with name "${name}" already exists`);
+      setIsApplyDisabled(true);
+      // return;
+    } else if (name === "") {
+      setErrorMessage(`Shop name cannot be empty`);
+      setIsApplyDisabled(true);
+    } else {
+      setErrorMessage("");
+      setIsApplyDisabled(false);
+    }
+  };
+
   return (
     <Dialog
       open={open}
       onClose={handleClose}
       aria-labelledby="modal-add-shop"
       aria-describedby="modal-add-shop-window"
+      fullWidth
     >
       <DialogTitle>Add Shop</DialogTitle>
       <DialogContent>
@@ -54,9 +69,12 @@ export default function AddShopPopup({ open, setOpen, shops, setShops }) {
             fullWidth
             value={newName}
             sx={{ margin: 1 }}
-            onChange={(event) => setNewName(event.target.value)}
-          ></TextField>
-          <Typography>{errorMessage}</Typography>
+            onChange={(event) => handleChange(event)}
+            inputRef={(input) => input && input.focus()}
+          />
+          <Box minHeight={20}>
+            <Typography variant="body2">{errorMessage}</Typography>
+          </Box>
         </Box>
       </DialogContent>
       <DialogActions>
