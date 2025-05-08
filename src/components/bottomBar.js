@@ -259,6 +259,7 @@ export const BottomBar = ({
         setOpen={setAddShopPopupOpen}
         shops={shops}
         setShops={setShops}
+        setCurrentShop={setCurrentShop}
       />
     </div>
   );
