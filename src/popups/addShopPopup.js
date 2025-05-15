@@ -9,11 +9,13 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
-import { createShop } from "../data/api/shopsData";
+import { createShop, deleteShop, updateShop } from "../data/api/shopsData";
 import logger from "../logger/logger";
 import { updateCurrentShop } from "../data/api/currentShopData";
 
-// TODO set red color of error
+// TODO set red color of error - only for errors after pressing buttons
+// add confirmation dialog on remove shop
+// handle disable of edit button on bottom bar
 
 export default function AddShopPopup({
   open,
@@ -21,6 +23,7 @@ export default function AddShopPopup({
   shops,
   setShops,
   setCurrentShop,
+  editingShop,
 }) {
   const handleClose = () => setOpen(false);
 
@@ -33,17 +36,56 @@ export default function AddShopPopup({
       setErrorMessage(" ");
       setNewName("");
       setIsApplyDisabled(true);
+      if (editingShop) {
+        setNewName(editingShop.name);
+      }
     }
   }, [open]);
 
-  const handleCreate = async () => {
+  const handleApply = async () => {
+    if (editingShop) {
+      await handleEditShop();
+    } else {
+      await handleCreateShop();
+    }
+  };
+
+  const handleCreateShop = async () => {
     if (shops.find((shop) => newName === shop.name)) {
       setErrorMessage(`Shop with name "${newName}" already exists`);
       return;
     }
-    const result = await sendRequest();
+    const result = await sendCreateRequest();
     if (result) {
       handleClose();
+    }
+  };
+
+  const handleEditShop = async () => {
+    if (
+      newName !== editingShop.name &&
+      shops.find((shop) => newName === shop.name)
+    ) {
+      setErrorMessage(`Shop with name "${newName}" already exists`);
+      return;
+    }
+    const result = await sendUpdateRequest();
+    if (result) {
+      handleClose();
+    }
+  };
+
+  const handleDeleteShop = async () => {
+    if (!editingShop) {
+      throw new Error(
+        "Bad Operation, cannot remove shop when dialog not in editing mode"
+      );
+    }
+    const result = await sendDeleteRequest();
+    if (result) {
+      handleClose();
+    } else {
+      setErrorMessage("Removing shop failed");
     }
   };
 
@@ -51,7 +93,9 @@ export default function AddShopPopup({
     const name = e.target.value;
     setNewName(name);
     if (shops.find((shop) => name === shop.name)) {
-      setErrorMessage(`Shop with name "${name}" already exists`);
+      if (!editingShop || name !== editingShop.name) {
+        setErrorMessage(`Shop with name "${name}" already exists`);
+      }
       setIsApplyDisabled(true);
       // return;
     } else if (name === "") {
@@ -63,7 +107,7 @@ export default function AddShopPopup({
     }
   };
 
-  const sendRequest = async () => {
+  const sendCreateRequest = async () => {
     try {
       const response = await createShop({ name: newName, logo: "logo" });
       logger.info(`Shop ${newName} created`);
@@ -79,6 +123,48 @@ export default function AddShopPopup({
     }
   };
 
+  const sendDeleteRequest = async () => {
+    try {
+      const response = await deleteShop(editingShop.id);
+      logger.info(`Shop ${newName} deleted`);
+      logger.debug(response);
+      setShops(shops.filter((shop) => shop.id !== editingShop.id));
+      setCurrentShop({});
+      return true;
+    } catch (error) {
+      logger.error(`Removing shop failed: ${error}`);
+      return false;
+    }
+  };
+
+  const sendUpdateRequest = async () => {
+    try {
+      const response = await updateShop(editingShop.id, {
+        name: newName,
+        logo: "logo",
+      });
+      logger.info(`Shop ${editingShop.name} updated to ${newName}`);
+      logger.debug(response);
+      setShops(
+        shops.map((shop) =>
+          shop.id === editingShop.id
+            ? { id: editingShop.id, name: newName, logo: editingShop.logo }
+            : shop
+        )
+      );
+      await updateCurrentShop(editingShop.id);
+      setCurrentShop({
+        shop_id: editingShop.id,
+        name: newName,
+        logo: editingShop.logo,
+      });
+      return true;
+    } catch (error) {
+      logger.error(`Updating shop failed: ${error}`);
+      return false;
+    }
+  };
+
   return (
     <Dialog
       open={open}
@@ -87,7 +173,9 @@ export default function AddShopPopup({
       aria-describedby="modal-add-shop-window"
       fullWidth
     >
-      <DialogTitle>Add Shop</DialogTitle>
+      <DialogTitle>
+        {editingShop ? `Edit Shop ${editingShop.name}` : "Add Shop"}
+      </DialogTitle>
       <DialogContent>
         <Box>
           <TextField
@@ -106,15 +194,22 @@ export default function AddShopPopup({
       </DialogContent>
       <DialogActions>
         <Box display="flex" justifyContent="space-between" width="100%">
-          <Button variant="contained" color="error" sx={{ margin: 1 }}>
+          <Button
+            variant="contained"
+            color="error"
+            sx={{ margin: 1, opacity: editingShop ? 100 : 0 }}
+            disabled={!editingShop}
+            onClick={handleDeleteShop}
+          >
             Remove Shop
           </Button>
+
           <Box display={"flex"}>
             <Button
               variant={"contained"}
               type={"submit"}
               sx={{ margin: 1, width: 100, backgroundColor: "#A64D79" }}
-              onClick={handleCreate}
+              onClick={handleApply}
               disabled={isApplyDisabled}
             >
               Apply

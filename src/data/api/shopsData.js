@@ -13,3 +13,15 @@ export const createShop = async (shopData) => {
   logger.debug(response);
   return response;
 };
+
+export const updateShop = async (id, shopData) => {
+  const response = await api.put(shopsEndpoints.put(id), shopData);
+  logger.debug(response);
+  return response;
+};
+
+export const deleteShop = async (id) => {
+  const response = await api.delete(shopsEndpoints.delete(id));
+  logger.debug(response);
+  return response;
+};

@@ -13,7 +13,7 @@ import React, { useEffect } from "react";
 import { getShopsData } from "../data/api/shopsData";
 import logger from "../logger/logger";
 import { updateCurrentShop } from "../data/api/currentShopData";
-import { Delete, DeleteSweep, SwapVert } from "@mui/icons-material";
+import { Delete, DeleteSweep, Edit, SwapVert } from "@mui/icons-material";
 import { ConfirmationPopup } from "../popups/confirmationPopup";
 import SynchronizationStatusBar from "./synchronizationStatusBar";
 import { APP_VERSION } from "../constants/version";
@@ -58,11 +58,16 @@ export const BottomBar = ({
   const [categoryOrderDisabled, setCategoryOrderDisabled] =
     React.useState(true);
   const [addShopPopupOpen, setAddShopPopupOpen] = React.useState(false);
+  const [editingShop, setEditingShop] = React.useState(null);
 
   useEffect(() => {
-    if (shopsTimestamp) {
-      setNeedsUpdate(true);
-    }
+    (async () => {
+      setLoading(true);
+      const fetchedShops = await getShopsData();
+      setLoading(false);
+      setShops(fetchedShops);
+      setNeedsUpdate(false);
+    })();
   }, [shopsTimestamp]);
 
   useEffect(() => {
@@ -77,17 +82,17 @@ export const BottomBar = ({
 
   const handleOpen = () => {
     setOpen(true);
-    if (!needsUpdate) {
-      return;
-    }
-    setShops([]);
-    (async () => {
-      setLoading(true);
-      const fetchedShops = await getShopsData();
-      setLoading(false);
-      setShops(fetchedShops);
-      setNeedsUpdate(false);
-    })();
+    // if (!needsUpdate) {
+    //   return;
+    // }
+    // setShops([]);
+    // (async () => {
+    //   setLoading(true);
+    //   const fetchedShops = await getShopsData();
+    //   setLoading(false);
+    //   setShops(fetchedShops);
+    //   setNeedsUpdate(false);
+    // })();
   };
 
   const handleClose = () => {
@@ -98,6 +103,7 @@ export const BottomBar = ({
     const shopId = value.id;
     if (shopId === 0) {
       logger.debug("Handle adding new shop");
+      setEditingShop(null);
       setAddShopPopupOpen(true);
     } else {
       logger.debug("Select new current shop");
@@ -133,6 +139,12 @@ export const BottomBar = ({
     logger.debug("Removing all unchecked items");
     shoppingCartProcessor.deleteAllUnCheckedItems();
     setDeleteAllConfirmationOpen(false);
+  };
+
+  const handleEditShop = () => {
+    const shop = shops.find((shop) => shop.id === currentShop.shop_id);
+    setEditingShop(shop);
+    setAddShopPopupOpen(true);
   };
 
   return (
@@ -211,13 +223,14 @@ export const BottomBar = ({
               {isMobile ? "" : "Categories"}
             </Button>
             <Button
-              startIcon={<Delete />}
+              startIcon={<Edit />}
               variant="contained"
-              disabled={true}
+              // disabled={false}
               sx={{ marginX: 1, color: "white", backgroundColor: "#A64D79" }}
               size={isMobile ? "small" : "medium"}
+              onClick={handleEditShop}
             >
-              {isMobile ? "" : "Delete"}
+              {isMobile ? "" : "Edit"}
             </Button>
           </Toolbar>
           <footer>
@@ -260,6 +273,7 @@ export const BottomBar = ({
         shops={shops}
         setShops={setShops}
         setCurrentShop={setCurrentShop}
+        editingShop={editingShop}
       />
     </div>
   );
