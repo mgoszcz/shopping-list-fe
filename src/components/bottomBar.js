@@ -13,7 +13,7 @@ import React, { useEffect } from "react";
 import { getShopsData } from "../data/api/shopsData";
 import logger from "../logger/logger";
 import { updateCurrentShop } from "../data/api/currentShopData";
-import { Delete, DeleteSweep, Edit, SwapVert } from "@mui/icons-material";
+import { DeleteSweep, Edit, SwapVert } from "@mui/icons-material";
 import { ConfirmationPopup } from "../popups/confirmationPopup";
 import SynchronizationStatusBar from "./synchronizationStatusBar";
 import { APP_VERSION } from "../constants/version";
@@ -177,7 +177,6 @@ export const BottomBar = ({
               open={open}
               loading={loading}
               getOptionLabel={(option) => (option.name ? option.name : "")}
-              // getOptionDisabled={(option) => option.id === 0}
               value={currentSelection}
               disableClearable
               onChange={(event, value) => {

@@ -103,7 +103,6 @@ export default function AddShopPopup({
         setErrorMessage(`Shop with name "${name}" already exists`);
       }
       setIsApplyDisabled(true);
-      // return;
     } else if (name === "") {
       setErrorMessage(`Shop name cannot be empty`);
       setIsApplyDisabled(true);
