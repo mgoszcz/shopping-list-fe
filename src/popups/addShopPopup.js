@@ -5,6 +5,8 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Paper,
+  Popper,
   TextField,
   Typography,
 } from "@mui/material";
@@ -12,10 +14,6 @@ import { useEffect, useRef, useState } from "react";
 import { createShop, deleteShop, updateShop } from "../data/api/shopsData";
 import logger from "../logger/logger";
 import { updateCurrentShop } from "../data/api/currentShopData";
-
-// TODO set red color of error - only for errors after pressing buttons
-// add confirmation dialog on remove shop
-// handle disable of edit button on bottom bar
 
 export default function AddShopPopup({
   open,
@@ -30,10 +28,13 @@ export default function AddShopPopup({
   const [newName, setNewName] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isApplyDisabled, setIsApplyDisabled] = useState(true);
+  const [openConfirmation, setOpenConfirmation] = useState(false);
+  const deleteButtonRef = useRef(null);
+  const dialogRef = useRef(null);
 
   useEffect(() => {
     if (open) {
-      setErrorMessage(" ");
+      setErrorMessage("");
       setNewName("");
       setIsApplyDisabled(true);
       if (editingShop) {
@@ -41,6 +42,10 @@ export default function AddShopPopup({
       }
     }
   }, [open]);
+
+  const handleCloseConfirmation = () => {
+    setOpenConfirmation(false);
+  };
 
   const handleApply = async () => {
     if (editingShop) {
@@ -81,11 +86,12 @@ export default function AddShopPopup({
         "Bad Operation, cannot remove shop when dialog not in editing mode"
       );
     }
+    handleCloseConfirmation();
     const result = await sendDeleteRequest();
     if (result) {
       handleClose();
     } else {
-      setErrorMessage("Removing shop failed");
+      logger.error("Removing shop failed");
     }
   };
 
@@ -129,7 +135,7 @@ export default function AddShopPopup({
       logger.info(`Shop ${newName} deleted`);
       logger.debug(response);
       setShops(shops.filter((shop) => shop.id !== editingShop.id));
-      setCurrentShop({});
+      setCurrentShop({ logo: null, name: null, shop_id: null });
       return true;
     } catch (error) {
       logger.error(`Removing shop failed: ${error}`);
@@ -166,63 +172,100 @@ export default function AddShopPopup({
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="modal-add-shop"
-      aria-describedby="modal-add-shop-window"
-      fullWidth
-    >
-      <DialogTitle>
-        {editingShop ? `Edit Shop ${editingShop.name}` : "Add Shop"}
-      </DialogTitle>
-      <DialogContent>
-        <Box>
-          <TextField
-            label={"Shop Name"}
-            variant={"outlined"}
-            fullWidth
-            value={newName}
-            sx={{ margin: 1 }}
-            onChange={(event) => handleChange(event)}
-            inputRef={(input) => input && input.focus()}
-          />
-          <Box minHeight={20}>
-            <Typography variant="body2">{errorMessage}</Typography>
+    <div>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-add-shop"
+        aria-describedby="modal-add-shop-window"
+        fullWidth
+        ref={dialogRef}
+      >
+        <DialogTitle>
+          {editingShop ? `Edit Shop ${editingShop.name}` : "Add Shop"}
+        </DialogTitle>
+        <DialogContent>
+          <Box>
+            <TextField
+              label={"Shop Name"}
+              variant={"outlined"}
+              fullWidth
+              value={newName}
+              sx={{ margin: 1 }}
+              onChange={(event) => handleChange(event)}
+              inputRef={(input) => input && input.focus()}
+            />
+            <Box minHeight={20}>
+              <Typography variant="body2">{errorMessage}</Typography>
+            </Box>
           </Box>
-        </Box>
-      </DialogContent>
-      <DialogActions>
-        <Box display="flex" justifyContent="space-between" width="100%">
-          <Button
-            variant="contained"
-            color="error"
-            sx={{ margin: 1, opacity: editingShop ? 100 : 0 }}
-            disabled={!editingShop}
-            onClick={handleDeleteShop}
-          >
-            Remove Shop
-          </Button>
-
-          <Box display={"flex"}>
+        </DialogContent>
+        <DialogActions>
+          <Box display="flex" justifyContent="space-between" width="100%">
             <Button
-              variant={"contained"}
-              type={"submit"}
-              sx={{ margin: 1, width: 100, backgroundColor: "#A64D79" }}
-              onClick={handleApply}
-              disabled={isApplyDisabled}
+              variant="contained"
+              color="error"
+              sx={{ margin: 1, opacity: editingShop ? 100 : 0 }}
+              disabled={!editingShop}
+              onClick={() => setOpenConfirmation((prev) => !prev)}
+              ref={deleteButtonRef}
             >
-              Apply
+              Remove Shop
             </Button>
+
+            <Box display={"flex"}>
+              <Button
+                variant={"contained"}
+                type={"submit"}
+                sx={{ margin: 1, width: 100, backgroundColor: "#A64D79" }}
+                onClick={handleApply}
+                disabled={isApplyDisabled}
+              >
+                Apply
+              </Button>
+              <Button
+                sx={{ margin: 1, width: 100, color: "#A64D79" }}
+                onClick={handleClose}
+              >
+                Cancel
+              </Button>
+            </Box>
+          </Box>
+        </DialogActions>
+      </Dialog>
+      <Popper
+        open={openConfirmation}
+        anchorEl={deleteButtonRef.current}
+        placement={"top"}
+        container={dialogRef.current}
+        disablePortal={false}
+      >
+        <Paper
+          sx={{
+            padding: 2,
+            backgroundColor: "black",
+            boxShadow: 3,
+            zIndex: 1301,
+          }}
+        >
+          <Typography>
+            Are you sure you want to delete shop{" "}
+            {editingShop && editingShop.name}? It cannot be undone.
+          </Typography>
+          <Box display="flex" justifyContent="space-between" marginTop={1}>
             <Button
-              sx={{ margin: 1, width: 100, color: "#A64D79" }}
-              onClick={handleClose}
+              onClick={handleDeleteShop}
+              variant={"contained"}
+              sx={{ backgroundColor: "#A64D79" }}
             >
+              Yes
+            </Button>
+            <Button onClick={handleCloseConfirmation} sx={{ color: "#A64D79" }}>
               Cancel
             </Button>
           </Box>
-        </Box>
-      </DialogActions>
-    </Dialog>
+        </Paper>
+      </Popper>
+    </div>
   );
 }

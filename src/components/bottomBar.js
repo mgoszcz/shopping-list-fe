@@ -49,7 +49,6 @@ export const BottomBar = ({
   const [shops, setShops] = React.useState([]);
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const [needsUpdate, setNeedsUpdate] = React.useState(false);
   const [currentSelection, setCurrentSelection] = React.useState({});
   const [deleteAllConfirmationOpen, setDeleteAllConfirmationOpen] =
     React.useState(false);
@@ -59,6 +58,7 @@ export const BottomBar = ({
     React.useState(true);
   const [addShopPopupOpen, setAddShopPopupOpen] = React.useState(false);
   const [editingShop, setEditingShop] = React.useState(null);
+  const [editButtonDisabled, setEditButtonDisabled] = React.useState(true);
 
   useEffect(() => {
     (async () => {
@@ -66,7 +66,6 @@ export const BottomBar = ({
       const fetchedShops = await getShopsData();
       setLoading(false);
       setShops(fetchedShops);
-      setNeedsUpdate(false);
     })();
   }, [shopsTimestamp]);
 
@@ -74,25 +73,16 @@ export const BottomBar = ({
     if (currentShop.shop_id !== null) {
       setCurrentSelection(currentShop);
       setCategoryOrderDisabled(false);
+      setEditButtonDisabled(false);
     } else {
       setCurrentSelection({});
       setCategoryOrderDisabled(true);
+      setEditButtonDisabled(true);
     }
   }, [currentShop]);
 
   const handleOpen = () => {
     setOpen(true);
-    // if (!needsUpdate) {
-    //   return;
-    // }
-    // setShops([]);
-    // (async () => {
-    //   setLoading(true);
-    //   const fetchedShops = await getShopsData();
-    //   setLoading(false);
-    //   setShops(fetchedShops);
-    //   setNeedsUpdate(false);
-    // })();
   };
 
   const handleClose = () => {
@@ -225,7 +215,7 @@ export const BottomBar = ({
             <Button
               startIcon={<Edit />}
               variant="contained"
-              // disabled={false}
+              disabled={editButtonDisabled}
               sx={{ marginX: 1, color: "white", backgroundColor: "#A64D79" }}
               size={isMobile ? "small" : "medium"}
               onClick={handleEditShop}
