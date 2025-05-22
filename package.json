@@ -17,10 +17,14 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-scripts": "5.0.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
     "web-vitals": "^4.2.4"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@playwright/test": "^1.52.0",
+    "@types/node": "^22.15.21",
     "eslint-plugin-react": "^7.37.4"
   },
   "scripts": {
