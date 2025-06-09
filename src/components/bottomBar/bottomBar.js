@@ -10,15 +10,15 @@ import {
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import React, { useEffect } from "react";
-import { getShopsData } from "../data/api/shopsData";
-import logger from "../logger/logger";
-import { updateCurrentShop } from "../data/api/currentShopData";
+import { getShopsData } from "../../data/api/shopsData";
+import logger from "../../logger/logger";
+import { updateCurrentShop } from "../../data/api/currentShopData";
 import { DeleteSweep, Edit, SwapVert } from "@mui/icons-material";
-import { ConfirmationPopup } from "../popups/confirmationPopup";
+import { ConfirmationPopup } from "../../popups/confirmationPopup";
 import SynchronizationStatusBar from "./synchronizationStatusBar";
-import { APP_VERSION } from "../constants/version";
-import CategoryOrderPopup from "../popups/categoryOrderPopup";
-import AddShopPopup from "../popups/addShopPopup";
+import { APP_VERSION } from "../../constants/version";
+import CategoryOrderPopup from "../../popups/categoryOrderPopup";
+import AddShopPopup from "../../popups/addShopPopup";
 
 const ENVIRONMENT = process.env.REACT_APP_ENVIRONMENT;
 
@@ -43,10 +43,11 @@ export const BottomBar = ({
   shoppingCartProcessor,
   shoppingCartSyncState,
   articlesSyncState,
+  __testOverrideShops,
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const [shops, setShops] = React.useState([]);
+  const [shops, setShops] = React.useState(() => __testOverrideShops || []);
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [currentSelection, setCurrentSelection] = React.useState({});
@@ -61,6 +62,7 @@ export const BottomBar = ({
   const [editButtonDisabled, setEditButtonDisabled] = React.useState(true);
 
   useEffect(() => {
+    if (__testOverrideShops) return;
     (async () => {
       setLoading(true);
       const fetchedShops = await getShopsData();
@@ -183,7 +185,12 @@ export const BottomBar = ({
                 handleSelect(event, value);
               }}
               renderOption={(props, option) => (
-                <li {...props} key={option.id} data-id={option.id}>
+                <li
+                  {...props}
+                  key={option.id}
+                  data-id={option.id}
+                  data-testid={`option-${option.id}`}
+                >
                   <Typography variant={"h6"} noWrap>
                     {option.name}
                   </Typography>
@@ -196,7 +203,10 @@ export const BottomBar = ({
                   inputProps={{ ...inputProps, readOnly: true }}
                 />
               )}
-              options={[...shops, { name: "Add Shop...", id: 0 }]}
+              options={[
+                ...(__testOverrideShops || shops || []),
+                { name: "Add Shop...", id: 0 },
+              ]}
               sx={{ minWidth: 150, maxWidth: "50%", marginLeft: "auto" }}
             />
             <Button

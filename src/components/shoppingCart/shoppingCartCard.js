@@ -10,7 +10,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { Delete, Edit, Report, SwapVert } from "@mui/icons-material";
-import "../index.css";
+import "../../index.css";
 import IconButton from "@mui/material/IconButton";
 import { useEffect, useState } from "react";
 

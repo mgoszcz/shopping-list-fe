@@ -8,7 +8,7 @@ import { getCurrentShop } from "./data/api/currentShopData";
 import { ShoppingCartDataProcessor } from "./data/processors/shoppingCartDataProcessor";
 import logger from "./logger/logger";
 import TopBar from "./components/topBar";
-import { BottomBar } from "./components/bottomBar";
+import { BottomBar } from "./components/bottomBar/bottomBar";
 import { ShoppingArticlesProcessor } from "./data/processors/shoppingArticlesProcessor";
 import { synchState } from "./constants/synchState";
 import { ProgressOverlay } from "./components/progressOverlay";
