@@ -10,6 +10,7 @@ import {
 import userEvent from "@testing-library/user-event";
 import { BottomBar } from "../bottomBar";
 import { act } from "react";
+import * as currentShopApi from "../../../data/api/currentShopData";
 
 jest.mock("../../../data/api/shopsData", () => ({
   getShopsData: jest.fn(() =>
