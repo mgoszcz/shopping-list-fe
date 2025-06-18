@@ -240,7 +240,7 @@ export const BottomBar = ({
               marginX={1}
               backgroundColor={getColor()}
             >
-              <Typography variant="body2">
+              <Typography variant="body2" data-testid="applicationInfo">
                 Shopping List version {APP_VERSION}{" "}
                 {ENVIRONMENT === "production" ? "" : ENVIRONMENT}
               </Typography>

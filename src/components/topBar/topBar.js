@@ -6,7 +6,7 @@ import SearchDropDownInput from "./searchDropDownInput";
 import { PlaylistAddRounded } from "@mui/icons-material";
 import { useMediaQuery, useTheme } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
-import logger from "../logger/logger";
+import logger from "../../logger/logger";
 
 export default function TopBar({
   articlesTimestamp,

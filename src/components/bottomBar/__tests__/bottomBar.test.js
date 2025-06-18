@@ -11,6 +11,7 @@ import userEvent from "@testing-library/user-event";
 import { BottomBar } from "../bottomBar";
 import { act } from "react";
 import * as currentShopApi from "../../../data/api/currentShopData";
+import { APP_VERSION } from "../../../constants/version";
 
 jest.mock("../../../data/api/shopsData", () => ({
   getShopsData: jest.fn(() =>
@@ -319,4 +320,23 @@ test("clicking CATEGORIES button opens CategoriesPopup", async () => {
   await userEvent.click(categoriesButton);
 
   expect(screen.getByTestId("category-order-popup")).toBeInTheDocument();
+});
+
+test("Proper label and version is displayed", async () => {
+  await act(async () => {
+    render(
+      <BottomBar
+        currentShop={{ shop_id: 1 }}
+        setCurrentShop={jest.fn()}
+        shopsTimestamp={0}
+        shoppingCartProcessor={mockProcessor}
+        shoppingCartSyncState={0}
+        articlesSyncState={0}
+      />
+    );
+  });
+
+  expect(
+    screen.getByText(`Shopping List version ${APP_VERSION}`)
+  ).toBeInTheDocument();
 });
