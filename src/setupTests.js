@@ -2,4 +2,22 @@
 // allows you to do things like:
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom";
+
+const originalError = console.error;
+
+beforeAll(() => {
+  console.error = (...args) => {
+    if (
+      typeof args[0] === "string" &&
+      args[0].includes("not configured to support act")
+    ) {
+      return; // 🔕 suppress only this warning
+    }
+    originalError.call(console, ...args);
+  };
+});
+
+afterAll(() => {
+  console.error = originalError;
+});

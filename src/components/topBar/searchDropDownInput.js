@@ -138,6 +138,7 @@ export default function SearchDropDownInput({
       renderInput={(params) => (
         <TextField
           {...params}
+          data-testid="search-article-input"
           label="Search Article"
           size={isMobile ? "medium" : "large"}
           slotProps={{

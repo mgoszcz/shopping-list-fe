@@ -15,6 +15,7 @@ export default function TopBar({
   articlesProcessor,
   setArticlePopupOpen,
   setEditingArticle,
+  _forceAddButtonEnabled,
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -68,7 +69,8 @@ export default function TopBar({
             }}
             size={isMobile ? "medium" : "large"}
             onClick={handleAddButtonClick}
-            disabled={addButtonDisabled}
+            disabled={_forceAddButtonEnabled ? false : addButtonDisabled}
+            data-testid={"add-article-to-cart"}
           >
             <PlaylistAddRounded fontSize={"inherit"} />
           </IconButton>
