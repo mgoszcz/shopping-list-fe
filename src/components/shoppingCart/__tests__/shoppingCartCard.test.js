@@ -4,8 +4,8 @@ import {
   screen,
   fireEvent,
   within,
-} from "../../../tests/setup/test-utils";
-import ShoppingCartCard from "./shoppingCartCard";
+} from "../../../../tests/setup/test-utils";
+import ShoppingCartCard from "../shoppingCartCard";
 
 const mockProcessor = {
   toggleChecked: jest.fn(),
