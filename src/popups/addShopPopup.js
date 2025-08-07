@@ -195,7 +195,9 @@ export default function AddShopPopup({
               inputRef={(input) => input && input.focus()}
             />
             <Box minHeight={20}>
-              <Typography variant="body2">{errorMessage}</Typography>
+              <Typography variant="body2" data-testid="addShopError">
+                {errorMessage}
+              </Typography>
             </Box>
           </Box>
         </DialogContent>
