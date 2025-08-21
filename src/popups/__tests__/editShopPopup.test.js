@@ -2,7 +2,7 @@
 
 jest.mock("../../data/api/currentShopData", () => ({
   updateCurrentShop: jest.fn(() =>
-    Promise.resolve({ shop_id: 1, name: "Current Shop", logo: "🛍️" })
+    Promise.resolve({ shop_id: 1, name: "edited shop", logo: "logo" })
   ),
 }));
 
@@ -12,6 +12,12 @@ jest.mock("../../data/api/shopsData", () => ({
       data: { id: 123, name: "New Shop", logo: "logo" },
     })
   ),
+  updateShop: jest.fn(() =>
+    Promise.resolve({
+      data: { id: 1, name: "edited shop", logo: "logo" },
+    })
+  ),
+  deleteShop: jest.fn(() => Promise.resolve()),
 }));
 
 import React from "react";
@@ -23,7 +29,7 @@ import {
   act,
 } from "@testing-library/react";
 import AddShopPopup from "../addShopPopup";
-import { createShop } from "../../data/api/shopsData";
+import { createShop, deleteShop, updateShop } from "../../data/api/shopsData";
 import { updateCurrentShop } from "../../data/api/currentShopData";
 import userEvent from "@testing-library/user-event";
 
@@ -35,17 +41,17 @@ beforeEach(() => {
   });
   updateCurrentShop.mockResolvedValue({
     shop_id: 1,
-    name: "Current Shop",
-    logo: "🛍️",
+    name: "edited shop",
+    logo: "logo",
   });
 });
 
 const mockedShops = [
-  { id: 1, name: "Current Shop", logo: "🛍️" },
-  { id: 2, name: "Shop", logo: "🛍️" },
+  { id: 1, name: "Current Shop", logo: "logo" },
+  { id: 2, name: "Shop", logo: "logo" },
 ];
 
-describe("AddShopPopup", () => {
+describe("EditShopPopup", () => {
   const mockSetOpen = jest.fn();
   const mockSetShops = jest.fn();
   const mockSetCurrentShop = jest.fn();
@@ -58,11 +64,18 @@ describe("AddShopPopup", () => {
         setShops={mockSetShops}
         setCurrentShop={mockSetCurrentShop}
         shops={mockedShops}
+        editingShop={mockedShops[0]}
       />
     );
 
     const input = screen.getByLabelText(/shop name/i);
-    fireEvent.change(input, { target: { value: "New Shop" } });
+
+    await waitFor(() => {
+      expect(input).toHaveValue(mockedShops[0].name);
+    });
+
+    await userEvent.clear(input);
+    await userEvent.type(input, "edited shop");
 
     const saveButton = screen.getByText("Apply");
     await act(async () => {
@@ -70,20 +83,20 @@ describe("AddShopPopup", () => {
     });
 
     await waitFor(() => {
-      expect(createShop).toHaveBeenCalledWith({
-        name: "New Shop",
+      expect(updateShop).toHaveBeenCalledWith(1, {
+        name: "edited shop",
         logo: "logo",
       });
       expect(mockSetCurrentShop).toHaveBeenCalledWith({
-        name: "New Shop",
+        name: "edited shop",
         logo: "logo",
-        shop_id: 123,
+        shop_id: 1,
       });
       expect(mockSetOpen).toHaveBeenCalledWith(false);
     });
   });
 
-  test("Displays error when trying to add shop with the same name", async () => {
+  test("Displays error when trying to change name to already existing shop", async () => {
     render(
       <AddShopPopup
         open={true}
@@ -91,6 +104,7 @@ describe("AddShopPopup", () => {
         setShops={mockSetShops}
         setCurrentShop={mockSetCurrentShop}
         shops={mockedShops}
+        editingShop={mockedShops[0]}
       />
     );
 
@@ -106,7 +120,7 @@ describe("AddShopPopup", () => {
     });
   });
 
-  test("Disables apply button when no shop name is provided and shows message when applicable", async () => {
+  test("Disables apply button when no shop name is provided or name is the same as editing shop and shows message when applicable", async () => {
     render(
       <AddShopPopup
         open={true}
@@ -114,6 +128,7 @@ describe("AddShopPopup", () => {
         setShops={mockSetShops}
         setCurrentShop={mockSetCurrentShop}
         shops={mockedShops}
+        editingShop={mockedShops[0]}
       />
     );
 
@@ -122,7 +137,6 @@ describe("AddShopPopup", () => {
     const applyButton = screen.getByText("Apply");
 
     expect(applyButton).toBeDisabled();
-    fireEvent.change(input, { target: { value: "Shop" } });
     fireEvent.change(input, { target: { value: "" } });
 
     await waitFor(() => {
@@ -130,9 +144,15 @@ describe("AddShopPopup", () => {
       expect(error).toBeVisible();
       expect(applyButton).toBeDisabled();
     });
+
+    fireEvent.change(input, { target: { value: mockedShops[0].name } });
+
+    await waitFor(() => {
+      expect(applyButton).toBeDisabled();
+    });
   });
 
-  test("Add Shop is displayed and remove shop button is hidden", async () => {
+  test("Edit Shop is displayed and remove shop button is visible and enabled", async () => {
     render(
       <AddShopPopup
         open={true}
@@ -140,14 +160,52 @@ describe("AddShopPopup", () => {
         setShops={mockSetShops}
         setCurrentShop={mockSetCurrentShop}
         shops={mockedShops}
+        editingShop={mockedShops[0]}
       />
     );
     const header = screen.getByTestId("add-edit-shop-dialog");
     const removeShopButton = screen.getByTestId("remove-shop-button");
 
     await waitFor(() => {
-      expect(header).toHaveTextContent("Add Shop");
-      expect(removeShopButton).not.toBeVisible();
+      expect(header).toHaveTextContent("Edit Shop " + mockedShops[0].name);
+      expect(removeShopButton).toBeVisible();
+      expect(removeShopButton).toBeEnabled();
+    });
+  });
+
+  test("remove shop button removes shop", async () => {
+    deleteShop.mockResolvedValue({ data: { success: true } });
+    const user = userEvent.setup();
+
+    render(
+      <AddShopPopup
+        open={true}
+        setOpen={mockSetOpen}
+        setShops={mockSetShops}
+        setCurrentShop={mockSetCurrentShop}
+        shops={mockedShops}
+        editingShop={mockedShops[0]}
+      />
+    );
+
+    const removeShopButton = screen.getByTestId("remove-shop-button");
+    await user.click(removeShopButton);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("confirm-remove-shop")).toBeVisible();
+    });
+
+    const confirmButton = screen.getByTestId("confirm-remove-shop");
+    await user.click(confirmButton);
+
+    await waitFor(() => {
+      expect(deleteShop).toHaveBeenCalledWith(1);
+      expect(mockSetCurrentShop).toHaveBeenCalledWith({
+        name: null,
+        logo: null,
+        shop_id: null,
+      });
+      expect(mockSetOpen).toHaveBeenCalledWith(false);
     });
   });
 
@@ -159,6 +217,7 @@ describe("AddShopPopup", () => {
         setShops={mockSetShops}
         setCurrentShop={mockSetCurrentShop}
         shops={mockedShops}
+        editingShop={mockedShops[0]}
       />
     );
 

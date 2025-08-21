@@ -180,7 +180,7 @@ export default function AddShopPopup({
         fullWidth
         ref={dialogRef}
       >
-        <DialogTitle>
+        <DialogTitle data-testid="add-edit-shop-dialog">
           {editingShop ? `Edit Shop ${editingShop.name}` : "Add Shop"}
         </DialogTitle>
         <DialogContent>
@@ -210,6 +210,7 @@ export default function AddShopPopup({
               disabled={!editingShop}
               onClick={() => setOpenConfirmation((prev) => !prev)}
               ref={deleteButtonRef}
+              data-testid="remove-shop-button"
             >
               Remove Shop
             </Button>
@@ -258,6 +259,7 @@ export default function AddShopPopup({
               onClick={handleDeleteShop}
               variant={"contained"}
               sx={{ backgroundColor: "#A64D79" }}
+              data-testid="confirm-remove-shop"
             >
               Yes
             </Button>
