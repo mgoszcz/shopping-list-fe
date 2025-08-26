@@ -23,12 +23,15 @@ export default function ArticlePopup({
   setOpen,
   article,
   articlesProcessor,
+  _selectedCategoryOverride,
 }) {
   const handleClose = () => setOpen(false);
   const [categories, setCategories] = React.useState([]);
 
   const [articleName, setArticleName] = React.useState("");
-  const [selectedCategory, setSelectedCategory] = React.useState({});
+  const [selectedCategory, setSelectedCategory] = React.useState(
+    _selectedCategoryOverride ?? {}
+  );
   const [openConfirmation, setOpenConfirmation] = React.useState(false);
   const deleteButtonRef = React.useRef(null);
   const dialogRef = React.useRef(null);
@@ -38,11 +41,11 @@ export default function ArticlePopup({
 
   useEffect(() => {
     setArticleName("");
-    setSelectedCategory({});
+    setSelectedCategory(_selectedCategoryOverride ?? {});
     if (article.id === undefined) return;
     if (article.id === 0) {
       setArticleName(article.name);
-      setSelectedCategory({});
+      setSelectedCategory(_selectedCategoryOverride ?? {});
       setIsApplyDisabled(true);
       return;
     }
@@ -127,15 +130,13 @@ export default function ArticlePopup({
       name: articleName,
       category: category,
     };
-    articlesProcessor
-      .createArticle(newArticle, true)
-      .then(() => {
-        handleClose();
-        logger.debug("Create article request accepted");
-      })
-      .catch((error) => {
-        logger.error("Failed to create article: ", error);
-      });
+    try {
+      await articlesProcessor.createArticle(newArticle, true);
+      handleClose();
+      logger.debug("Create article request accepted");
+    } catch (error) {
+      logger.error("Failed to create article: ", error);
+    }
   };
 
   return (
@@ -152,7 +153,7 @@ export default function ArticlePopup({
         fullWidth
         PaperProps={{ sx: { minWidth: 300, maxWidth: "50vw" } }}
       >
-        <DialogTitle>
+        <DialogTitle data-testid="add-edit-article-dialog-title">
           {article.id !== 0 ? "Edit article" : "Add article"}
         </DialogTitle>
         <DialogContent>
@@ -169,7 +170,11 @@ export default function ArticlePopup({
               categories={categories}
               setCategories={setCategories}
               selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
+              setSelectedCategory={
+                _selectedCategoryOverride
+                  ? () => setSelectedCategory(_selectedCategoryOverride)
+                  : setSelectedCategory
+              }
               freeSoloEnabled={true}
             />
           </Box>
@@ -179,7 +184,7 @@ export default function ArticlePopup({
               variant="contained"
               color="error"
               disabled={article.id === 0}
-              sx={{ margin: 1 }}
+              sx={{ margin: 1, opacity: article.id !== 0 ? 100 : 0 }}
               onClick={handleToggleConfirmation}
               ref={deleteButtonRef}
             >
