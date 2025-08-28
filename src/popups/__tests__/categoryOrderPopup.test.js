@@ -1,7 +1,19 @@
+jest.mock("../../data/api/categoryOrderData", () => ({
+  getCategoryOrderData: jest.fn(),
+  setCategoryOrderData: jest.fn(),
+}));
+
+jest.mock("../../data/api/categoriesData", () => ({
+  createCategory: jest
+    .fn()
+    .mockResolvedValue({ data: { name: "newCategory", id: 99 } }),
+}));
+
 // __tests__/categoryOrderPopup.test.js
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { CategoryOrderPopup } from "../categoryOrderPopup";
+import CategoryOrderPopup from "../categoryOrderPopup";
+import { setCategoryOrderData } from "../../data/api/categoryOrderData";
 
 jest.mock("../../components/categoryOrderList/categoryOrderListDnd", () => ({
   CategoryOrderListDnd: () => <div data-testid="mock-dnd-list">DND List</div>,

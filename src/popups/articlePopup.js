@@ -56,7 +56,7 @@ export default function ArticlePopup({
       setCategories(fetchedCategories);
       setArticleName(fetchedArticle.name);
       setOriginalArticleName(fetchedArticle.name);
-      setSelectedCategory(fetchedArticle.category);
+      setSelectedCategory(_selectedCategoryOverride ?? fetchedArticle.category);
       setLoading(false);
     })();
   }, [article]);
@@ -86,15 +86,13 @@ export default function ArticlePopup({
       name: articleName,
       category: category,
     };
-    articlesProcessor
-      .editArticle(article, newArticle)
-      .then(() => {
-        handleClose();
-        logger.debug("Update article request accepted");
-      })
-      .catch((error) => {
-        logger.error("Failed to update article: ", error);
-      });
+    try {
+      await articlesProcessor.editArticle(article, newArticle);
+      handleClose();
+      logger.debug("Update article request accepted");
+    } catch (error) {
+      logger.error("Failed to update article: ", error);
+    }
   };
 
   const handleDelete = async () => {
@@ -236,6 +234,7 @@ export default function ArticlePopup({
               onClick={handleDelete}
               variant={"contained"}
               sx={{ backgroundColor: "#A64D79" }}
+              data-testid="confirm-remove-article"
             >
               Yes
             </Button>
