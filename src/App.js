@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ShoppingCartPage from "./pages/shoppingCartPage";
 import { createTheme, ThemeProvider } from "@mui/material";
 import { getTimestampData } from "./data/api/timestampData";
