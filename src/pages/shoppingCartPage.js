@@ -1,7 +1,6 @@
 import { Container } from "@mui/material";
-import ShoppingCartCard from "../components/shoppingCartCard";
+import ShoppingCartCard from "../components/shoppingCart/shoppingCartCard";
 import ArticlePopup from "../popups/articlePopup";
-import React from "react";
 
 const ShoppingCartPage = ({
   shoppingCart,

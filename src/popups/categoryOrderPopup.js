@@ -14,11 +14,10 @@ import {
   getCategoryOrderData,
   setCategoryOrderData,
 } from "../data/api/categoryOrderData";
-import { getCategoriesData } from "../data/api/categoriesData";
 import { CategorySelector } from "../components/categorySelector";
-import { Add, PlaylistAddRounded } from "@mui/icons-material";
+import { PlaylistAddRounded } from "@mui/icons-material";
 import { useTheme } from "@emotion/react";
-import CategoryOrderListDnd from "../components/categoryOrderListDnd";
+import CategoryOrderListDnd from "../components/categoryOrderList/categoryOrderListDnd";
 import { isObjectEmpty } from "../utils/isObjectEmpty";
 
 export default function CategoryOrderPopup({

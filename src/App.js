@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ShoppingCartPage from "./pages/shoppingCartPage";
 import { createTheme, ThemeProvider } from "@mui/material";
 import { getTimestampData } from "./data/api/timestampData";
@@ -7,8 +6,8 @@ import { TABLE_NAMES } from "./constants/tableNames";
 import { getCurrentShop } from "./data/api/currentShopData";
 import { ShoppingCartDataProcessor } from "./data/processors/shoppingCartDataProcessor";
 import logger from "./logger/logger";
-import TopBar from "./components/topBar";
-import { BottomBar } from "./components/bottomBar";
+import TopBar from "./components/topBar/topBar";
+import { BottomBar } from "./components/bottomBar/bottomBar";
 import { ShoppingArticlesProcessor } from "./data/processors/shoppingArticlesProcessor";
 import { synchState } from "./constants/synchState";
 import { ProgressOverlay } from "./components/progressOverlay";

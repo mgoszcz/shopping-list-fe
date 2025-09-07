@@ -6,7 +6,7 @@ import SearchDropDownInput from "./searchDropDownInput";
 import { PlaylistAddRounded } from "@mui/icons-material";
 import { useMediaQuery, useTheme } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
-import logger from "../logger/logger";
+import logger from "../../logger/logger";
 
 export default function TopBar({
   articlesTimestamp,
@@ -15,6 +15,7 @@ export default function TopBar({
   articlesProcessor,
   setArticlePopupOpen,
   setEditingArticle,
+  _forceAddButtonEnabled,
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -68,7 +69,8 @@ export default function TopBar({
             }}
             size={isMobile ? "medium" : "large"}
             onClick={handleAddButtonClick}
-            disabled={addButtonDisabled}
+            disabled={_forceAddButtonEnabled ? false : addButtonDisabled}
+            data-testid={"add-article-to-cart"}
           >
             <PlaylistAddRounded fontSize={"inherit"} />
           </IconButton>

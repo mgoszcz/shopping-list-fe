@@ -6,6 +6,7 @@ export function ProgressOverlay({ loading }) {
       loading && (
         <Backdrop
           open={loading}
+          data-testid="overlay-backdrop"
           sx={{
             position: "absolute",
             top: 0,

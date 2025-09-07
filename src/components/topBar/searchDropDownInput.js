@@ -3,7 +3,7 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useEffect, useState } from "react";
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { synchState } from "../constants/synchState";
+import { synchState } from "../../constants/synchState";
 
 const removeDiacritics = require("diacritics").remove;
 
@@ -138,6 +138,7 @@ export default function SearchDropDownInput({
       renderInput={(params) => (
         <TextField
           {...params}
+          data-testid="search-article-input"
           label="Search Article"
           size={isMobile ? "medium" : "large"}
           slotProps={{
