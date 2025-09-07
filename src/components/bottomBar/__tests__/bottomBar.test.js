@@ -1,12 +1,5 @@
 // components/__tests__/BottomBar.test.jsx
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  within,
-  logDOM,
-} from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { BottomBar } from "../bottomBar";
 import { act } from "react";

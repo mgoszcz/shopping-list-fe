@@ -20,7 +20,6 @@ jest.mock("../../data/api/shopsData", () => ({
   deleteShop: jest.fn(() => Promise.resolve()),
 }));
 
-import React from "react";
 import {
   render,
   screen,

@@ -17,7 +17,6 @@ const mockArticlesProcessor = {
   removeArticle: jest.fn(),
 };
 
-import React, { act } from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import ArticlePopup from "../articlePopup";
 import {

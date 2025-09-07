@@ -6,7 +6,6 @@ jest.mock("../../data/api/categoriesData", () => ({
     .mockResolvedValue({ data: { name: "newCategory", id: 99 } }),
 }));
 
-import React, { act } from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import ArticlePopup from "../articlePopup";
 import { createCategory } from "../../data/api/categoriesData";

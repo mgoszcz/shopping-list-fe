@@ -1,10 +1,5 @@
 // ShoppingCartCard.test.jsx
-import {
-  render,
-  screen,
-  fireEvent,
-  within,
-} from "../../../../tests/setup/test-utils";
+import { render, screen, fireEvent } from "../../../../tests/setup/test-utils";
 import ShoppingCartCard from "../shoppingCartCard";
 
 const mockProcessor = {

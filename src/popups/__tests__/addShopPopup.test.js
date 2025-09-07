@@ -14,7 +14,6 @@ jest.mock("../../data/api/shopsData", () => ({
   ),
 }));
 
-import React from "react";
 import {
   render,
   screen,

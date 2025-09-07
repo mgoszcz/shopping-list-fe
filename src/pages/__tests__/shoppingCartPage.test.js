@@ -1,5 +1,4 @@
 // __tests__/shoppingCartPage.test.js
-import React from "react";
 import { render, screen } from "@testing-library/react";
 import ShoppingCartPage from "../shoppingCartPage";
 
