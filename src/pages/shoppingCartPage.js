@@ -12,7 +12,11 @@ const ShoppingCartPage = ({
   articlesProcessor,
 }) => {
   return (
-    <Container maxWidth={"md"} sx={{ minWidth: 300, pb: "60px" }}>
+    <Container
+      maxWidth={"md"}
+      sx={{ minWidth: 300, pb: "60px" }}
+      data-testid="shopping-cart-container"
+    >
       {shoppingCart.map((cartItem) => (
         <ShoppingCartCard
           cartItem={cartItem}

@@ -2,11 +2,13 @@ import { test as base } from "@playwright/test";
 import { TopBarPage } from "../pages/topBarPage";
 import { ArticleGenerator } from "../generators/articleGenerator";
 import { generateRandomName } from "../utils/random";
+import { ShoppingCartPage } from "../pages/shoppingCartPage";
 
 type TopBarFixture = {
   topBarPage: TopBarPage;
   articleGenerator: ArticleGenerator;
   articleName: string;
+  shoppingCartPage: ShoppingCartPage;
 };
 
 export const test = base.extend<TopBarFixture>({
@@ -17,6 +19,10 @@ export const test = base.extend<TopBarFixture>({
 
   topBarPage: async ({ page }, use) => {
     await use(new TopBarPage(page));
+  },
+
+  shoppingCartPage: async ({ page }, use) => {
+    await use(new ShoppingCartPage(page));
   },
 
   articleGenerator: async ({}, use) => {
