@@ -1,17 +1,16 @@
-import axios from "axios";
-import { shoppingArticlesEndpoint } from "../consts/urls";
-import { expect } from "@playwright/test";
+import { Api } from "./api";
+import { Category } from "./categoriesApi";
 
-export async function createArticle(name: string, categoryId: number) {
-  const response = await axios.post(shoppingArticlesEndpoint, {
-    name,
-    category: { id: categoryId },
-  });
-  expect(response.status).toBe(201);
-  return response.data.id;
-}
+export type Article = {
+  id: number;
+  name: string;
+  category: Category;
+  createdAt?: string;
+  updatedAt?: string;
+};
 
-export async function deleteArticle(id: number) {
-  const response = await axios.delete(`${shoppingArticlesEndpoint}/${id}`);
-  expect(response.status).toBe(204);
+export class ArticleApi extends Api<Article> {
+  constructor(baseUrl: string) {
+    super(baseUrl, "/shoppingArticles");
+  }
 }

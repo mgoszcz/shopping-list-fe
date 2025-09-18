@@ -1,9 +1,14 @@
-import axios from "axios";
-import { categoriesEndpoint } from "../consts/urls";
-import { expect } from "@playwright/test";
+import { Api } from "./api";
 
-export async function createCategory(name: string) {
-  const response = await axios.post(categoriesEndpoint, { name });
-  expect(response.status).toBe(201);
-  return response.data.id;
+export type Category = {
+  id: number;
+  name?: string;
+  updatedAt?: string;
+  createdAt?: string;
+};
+
+export class CategoriesApi extends Api<Category> {
+  constructor(baseUrl: string) {
+    super(baseUrl, "/categories");
+  }
 }

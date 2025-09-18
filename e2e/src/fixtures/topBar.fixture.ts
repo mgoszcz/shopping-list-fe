@@ -1,22 +1,20 @@
 import { test as base } from "@playwright/test";
 import { TopBarPage } from "../pages/topBarPage";
 import { ArticleGenerator } from "../generators/articleGenerator";
-import { generateRandomName } from "../utils/random";
 import { ShoppingCartPage } from "../pages/shoppingCartPage";
+import { Article, ArticleApi } from "../api/articleApi";
+import { CategoriesApi } from "../api/categoriesApi";
+import { baseUrl } from "../consts/urls";
 
 type TopBarFixture = {
   topBarPage: TopBarPage;
-  articleGenerator: ArticleGenerator;
-  articleName: string;
+  article: Partial<Article>;
   shoppingCartPage: ShoppingCartPage;
+  articlesApi: ArticleApi;
+  categoriesApi: CategoriesApi;
 };
 
 export const test = base.extend<TopBarFixture>({
-  articleName: async ({}, use) => {
-    const name = generateRandomName("topBar_test_e2e");
-    await use(name);
-  },
-
   topBarPage: async ({ page }, use) => {
     await use(new TopBarPage(page));
   },
@@ -25,9 +23,17 @@ export const test = base.extend<TopBarFixture>({
     await use(new ShoppingCartPage(page));
   },
 
-  articleGenerator: async ({}, use) => {
-    const articleGenerator = new ArticleGenerator();
-    await use(articleGenerator);
-    await articleGenerator.cleanup();
+  articlesApi: async ({}, use) => {
+    await use(new ArticleApi(baseUrl));
+  },
+
+  categoriesApi: async ({}, use) => {
+    await use(new CategoriesApi(baseUrl));
+  },
+
+  article: async ({ articlesApi, categoriesApi }, use) => {
+    const generator = new ArticleGenerator(articlesApi, categoriesApi);
+    await use(await generator.generateAndPost());
+    await generator.cleanup();
   },
 });

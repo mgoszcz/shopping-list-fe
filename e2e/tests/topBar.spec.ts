@@ -1,27 +1,26 @@
 import { test } from "../src/fixtures/topBar.fixture";
 import { expect } from "@playwright/test";
 
-test.beforeEach(async ({ articleGenerator, articleName, page }) => {
+test.beforeEach(async ({ page }) => {
   await page.goto("http://localhost:3000/");
-  await articleGenerator.generateArticle(articleName);
 });
 
 test("existing article can be found on dropdown", async ({
   topBarPage,
-  articleName,
+  article,
 }) => {
-  await topBarPage.articlesDropdown.typeArticleName(articleName);
-  await topBarPage.articlesDropdown.verifyArticleInList(articleName);
+  await topBarPage.articlesDropdown.typeArticleName(article.name!);
+  await topBarPage.articlesDropdown.verifyArticleInList(article.name!);
 });
 
 test("user can add article", async ({
   topBarPage,
-  articleName,
+  article,
   shoppingCartPage,
 }) => {
-  await topBarPage.articlesDropdown.selectArticle(articleName);
+  await topBarPage.articlesDropdown.selectArticle(article.name!);
   await topBarPage.addArticleButton.click();
-  await shoppingCartPage.verifyArticleInShoppingCart(articleName);
+  await shoppingCartPage.verifyArticleInShoppingCart(article.name!);
 });
 
 // test("top bar is visible", async ({ page }) => {
