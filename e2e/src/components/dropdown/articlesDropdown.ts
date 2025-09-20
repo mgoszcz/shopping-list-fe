@@ -1,4 +1,5 @@
 import { expect, Locator, Page } from "@playwright/test";
+import { time } from "console";
 
 const selectors = {
   root: '[data-testid="search-article-input"]',
@@ -20,12 +21,21 @@ export class ArticlesDropdown {
     this._articleListbox = page.locator(selectors.articleListbox);
   }
 
-  private async _getArticleFromList(name: string) {
-    for (const li of await this._articleListbox.locator("li").all()) {
+  private async _getArticleFromList(name: string): Promise<Locator | null> {
+    const items = await this._articleListbox.locator("li").all();
+    for (const li of items) {
       const articleName = await li.locator("h5").textContent();
-      if (articleName === name) return li;
+      if (articleName?.trim() === name) {
+        return li;
+      }
     }
     return null;
+  }
+
+  private async _awaitLoadingFinished(timeout = 10000) {
+    await expect(this._articleListbox).not.toContainText("Loading", {
+      timeout: timeout,
+    });
   }
 
   async typeArticleName(name: string) {
@@ -38,13 +48,23 @@ export class ArticlesDropdown {
     if ((await this._articleListbox.isVisible()) === false) {
       await this._input.click();
     }
+    await this._awaitLoadingFinished();
     await expect
-      .poll(async () => await this._getArticleFromList(name), { timeout: 1000 })
-      .not.toBeNull();
+      .poll(
+        async () => {
+          const article = await this._getArticleFromList(name);
+          return article;
+        },
+        {
+          timeout: 10000,
+        }
+      )
+      .toBeTruthy();
   }
 
   async selectArticle(name: string) {
     await this.typeArticleName(name);
+    await this.verifyArticleInList(name);
     const articleItem = await this._getArticleFromList(name);
     await articleItem?.click();
   }
