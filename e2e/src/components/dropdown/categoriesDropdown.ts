@@ -17,7 +17,7 @@ export class CategoriesDropdown {
   private async _getCategoryFromList(name: string): Promise<Locator | null> {
     const items = await this._categoriesListbox.locator("li").all();
     for (const li of items) {
-      const categoryName = await li.locator("h5").textContent();
+      const categoryName = await li.textContent();
       if (categoryName?.trim() === name) {
         return li;
       }
@@ -45,8 +45,8 @@ export class CategoriesDropdown {
     await expect
       .poll(
         async () => {
-          const article = await this._getCategoryFromList(name);
-          return article;
+          const category = await this._getCategoryFromList(name);
+          return category;
         },
         {
           timeout: 10000,
@@ -58,7 +58,7 @@ export class CategoriesDropdown {
   async selectCategory(name: string) {
     await this.typeCategoryName(name);
     await this.verifyCategoryInList(name);
-    const articleItem = await this._getCategoryFromList(name);
-    await articleItem?.click();
+    const categoryItem = await this._getCategoryFromList(name);
+    await categoryItem?.click();
   }
 }

@@ -2,7 +2,7 @@ import { test } from "../src/fixtures/topBar.fixture";
 import { expect } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("http://localhost:3000/");
+  await page.goto("https://mg-shopping-list-dev.netlify.app/");
 });
 
 test("existing article can be found on dropdown", async ({
@@ -35,8 +35,10 @@ test("user can add new article with existing category", async ({
   await topBarPage.articlesDropdown.typeArticleName(article.name!);
   await topBarPage.addArticleButton.click();
   await topBarPage.addArticleDialog.verifyDialogDisplayed("Add article");
+  await topBarPage.addArticleDialog.verifyApplyDisabled();
   await topBarPage.addArticleDialog.verifyArticleName(article.name!);
   await topBarPage.addArticleDialog.category.selectCategory(category.name!);
+  await topBarPage.addArticleDialog.verifyApplyEnabled();
   await topBarPage.addArticleDialog.apply();
   await shoppingCartPage.verifyArticleInShoppingCart(article.name!);
   await topBarPage.articlesDropdown.typeArticleName(article.name!);

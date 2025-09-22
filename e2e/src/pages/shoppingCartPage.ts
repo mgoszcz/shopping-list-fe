@@ -21,6 +21,7 @@ export class ShoppingCartPage {
       .locator(selectors.shoppingCartCard)
       .all()) {
       const name = await card.locator(selectors.articleName).textContent();
+      console.log(name);
       if (name === articleName) return new ShoppingCartItem(card, articleName);
     }
     return null;

@@ -16,11 +16,11 @@ export class BaseDialog {
   }
 
   async apply() {
-    this._applyButton.click();
+    await this._applyButton.click();
   }
 
   async cancel() {
-    this._cancelButton.click();
+    await this._cancelButton.click();
   }
 
   async verifyApplyEnabled() {
