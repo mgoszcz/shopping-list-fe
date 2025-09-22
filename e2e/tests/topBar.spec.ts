@@ -13,7 +13,7 @@ test("existing article can be found on dropdown", async ({
   await topBarPage.articlesDropdown.verifyArticleInList(article.name!);
 });
 
-test("user can add article", async ({
+test("user can add existing article", async ({
   topBarPage,
   article,
   shoppingCartPage,
@@ -21,6 +21,26 @@ test("user can add article", async ({
   await topBarPage.articlesDropdown.selectArticle(article.name!);
   await topBarPage.addArticleButton.click();
   await shoppingCartPage.verifyArticleInShoppingCart(article.name!);
+});
+
+test("user can add new article with existing category", async ({
+  topBarPage,
+  articleGenerator,
+  category,
+  shoppingCartPage,
+}) => {
+  const article = await articleGenerator.generate({
+    category: { id: category.id!, name: category.name },
+  });
+  await topBarPage.articlesDropdown.typeArticleName(article.name!);
+  await topBarPage.addArticleButton.click();
+  await topBarPage.addArticleDialog.verifyDialogDisplayed("Add article");
+  await topBarPage.addArticleDialog.verifyArticleName(article.name!);
+  await topBarPage.addArticleDialog.category.selectCategory(category.name!);
+  await topBarPage.addArticleDialog.apply();
+  await shoppingCartPage.verifyArticleInShoppingCart(article.name!);
+  await topBarPage.articlesDropdown.typeArticleName(article.name!);
+  await topBarPage.articlesDropdown.verifyArticleInList(article.name!);
 });
 
 // test("top bar is visible", async ({ page }) => {

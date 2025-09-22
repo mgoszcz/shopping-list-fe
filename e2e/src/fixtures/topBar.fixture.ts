@@ -3,9 +3,10 @@ import { TopBarPage } from "../pages/topBarPage";
 import { ArticleGenerator } from "../generators/articleGenerator";
 import { ShoppingCartPage } from "../pages/shoppingCartPage";
 import { Article, ArticleApi } from "../api/articleApi";
-import { CategoriesApi } from "../api/categoriesApi";
+import { CategoriesApi, Category } from "../api/categoriesApi";
 import { baseUrl } from "../consts/urls";
 import { ShoppingCartApi } from "../api/shoppingCartApi";
+import { CategoryGenerator } from "../generators/categoryGenerator";
 
 type TopBarFixture = {
   topBarPage: TopBarPage;
@@ -14,6 +15,8 @@ type TopBarFixture = {
   articlesApi: ArticleApi;
   categoriesApi: CategoriesApi;
   shoppingCartApi: ShoppingCartApi;
+  category: Partial<Category>;
+  articleGenerator: ArticleGenerator;
 };
 
 export const test = base.extend<TopBarFixture>({
@@ -37,13 +40,25 @@ export const test = base.extend<TopBarFixture>({
     await use(new ShoppingCartApi(baseUrl));
   },
 
-  article: async ({ articlesApi, categoriesApi, shoppingCartApi }, use) => {
+  articleGenerator: async (
+    { articlesApi, categoriesApi, shoppingCartApi },
+    use
+  ) => {
     const generator = new ArticleGenerator(
       articlesApi,
       categoriesApi,
       shoppingCartApi
     );
-    await use(await generator.generateAndPost());
+    await use(generator);
     await generator.cleanup();
+  },
+
+  article: async ({ articleGenerator }, use) => {
+    await use(await articleGenerator.generateAndPost());
+  },
+
+  category: async ({ categoriesApi }, use) => {
+    const generator = new CategoryGenerator(categoriesApi);
+    await use(await generator.generateAndPost());
   },
 });

@@ -1,5 +1,4 @@
 import { expect, Locator, Page } from "@playwright/test";
-import { time } from "console";
 
 const selectors = {
   root: '[data-testid="search-article-input"]',
@@ -10,13 +9,11 @@ const selectors = {
 
 export class ArticlesDropdown {
   private _root: Locator;
-  private _label: Locator;
   private _input: Locator;
   private _articleListbox: Locator;
 
   constructor(page: Page) {
     this._root = page.locator(selectors.root);
-    this._label = this._root.locator(selectors.label);
     this._input = this._root.locator(selectors.input);
     this._articleListbox = page.locator(selectors.articleListbox);
   }
