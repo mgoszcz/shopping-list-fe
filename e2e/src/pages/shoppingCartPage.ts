@@ -21,7 +21,6 @@ export class ShoppingCartPage {
       .locator(selectors.shoppingCartCard)
       .all()) {
       const name = await card.locator(selectors.articleName).textContent();
-      console.log(name);
       if (name === articleName) return new ShoppingCartItem(card, articleName);
     }
     return null;
@@ -29,7 +28,7 @@ export class ShoppingCartPage {
 
   async verifyArticleInShoppingCart(name: string) {
     await expect
-      .poll(async () => await this._getCartItemCard(name), { timeout: 1000 })
+      .poll(async () => await this._getCartItemCard(name), { timeout: 10000 })
       .not.toBeNull();
   }
 }

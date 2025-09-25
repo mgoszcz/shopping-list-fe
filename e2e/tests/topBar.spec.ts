@@ -2,7 +2,7 @@ import { test } from "../src/fixtures/topBar.fixture";
 import { expect } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("https://mg-shopping-list-dev.netlify.app/");
+  await page.goto("http://localhost:3000/");
 });
 
 test("existing article can be found on dropdown", async ({
@@ -28,6 +28,7 @@ test("user can add new article with existing category", async ({
   articleGenerator,
   category,
   shoppingCartPage,
+  page,
 }) => {
   const article = await articleGenerator.generate({
     category: { id: category.id!, name: category.name },
@@ -39,8 +40,14 @@ test("user can add new article with existing category", async ({
   await topBarPage.addArticleDialog.verifyArticleName(article.name!);
   await topBarPage.addArticleDialog.category.selectCategory(category.name!);
   await topBarPage.addArticleDialog.verifyApplyEnabled();
-  await topBarPage.addArticleDialog.apply();
+  await Promise.all([
+    page.waitForResponse(
+      (resp) => resp.url().includes("/shoppingCart") && resp.status() === 201
+    ),
+    await topBarPage.addArticleDialog.apply(),
+  ]);
   await shoppingCartPage.verifyArticleInShoppingCart(article.name!);
+  await articleGenerator.registerGeneratedObjectByName(article);
   await topBarPage.articlesDropdown.typeArticleName(article.name!);
   await topBarPage.articlesDropdown.verifyArticleInList(article.name!);
 });

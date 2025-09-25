@@ -21,6 +21,17 @@ export class ArticleGenerator extends Generator<Article> {
     this.categoryGenerator = new CategoryGenerator(categoriesApi);
   }
 
+  async registerGeneratedObjectByName(item: Partial<Article>) {
+    const articles = await this.apis.main.list();
+    for (const article of articles) {
+      if (article.name === item.name) {
+        this.createdItems.push(article);
+        return;
+      }
+    }
+    throw new Error(`Article with name ${item.name} does not exist in DB`);
+  }
+
   private async _isArticleInShoppingCart(articleId: number) {
     const shoppingCartItems = await this.apis.shoppingCart.list();
     for (const item of shoppingCartItems) {
