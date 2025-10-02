@@ -4,7 +4,7 @@ import { ShoppingCartItem } from "../components/shoppingCartItem";
 const selectors = {
   root: '[data-testid="shopping-cart-container"]',
   shoppingCartCard: ".shopping-cart-card",
-  articleName: '[data-testid="article-name"]',
+  articleName: '[data-testid="shopping-cart-card.article-name"]',
 };
 
 export class ShoppingCartPage {
@@ -26,9 +26,19 @@ export class ShoppingCartPage {
     return null;
   }
 
-  async verifyArticleInShoppingCart(name: string) {
+  async verifyArticleInShoppingCart(
+    articleName: string,
+    categoryName?: string
+  ) {
     await expect
-      .poll(async () => await this._getCartItemCard(name), { timeout: 10000 })
+      .poll(async () => await this._getCartItemCard(articleName), {
+        timeout: 10000,
+      })
       .not.toBeNull();
+    const shoppingCartCard = await this._getCartItemCard(articleName);
+    await shoppingCartCard?.verifyArticleName(articleName);
+    if (categoryName) {
+      await shoppingCartCard?.verifyCategoryName(categoryName);
+    }
   }
 }

@@ -30,7 +30,8 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/node": "^22.15.21",
     "eslint-plugin-react": "^7.37.4",
-    "jest": "^27.5.1"
+    "jest": "^27.5.1",
+    "tsx": "^4.20.6"
   },
   "overrides": {
     "typescript": "^5.8.3"
@@ -42,7 +43,8 @@
     "start:production": "cross-env REACT_APP_ENVIRONMENT=production react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "cleanup": "tsx e2e/src/scripts/databaseCleanup.ts"
   },
   "eslintConfig": {
     "extends": [

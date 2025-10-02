@@ -41,7 +41,7 @@ export class ArticlesDropdown {
     await this._input.fill(name);
   }
 
-  async verifyArticleInList(name: string) {
+  async verifyArticleInList(articleName: string, categoryName?: string) {
     if ((await this._articleListbox.isVisible()) === false) {
       await this._input.click();
     }
@@ -49,7 +49,7 @@ export class ArticlesDropdown {
     await expect
       .poll(
         async () => {
-          const article = await this._getArticleFromList(name);
+          const article = await this._getArticleFromList(articleName);
           return article;
         },
         {
@@ -57,6 +57,15 @@ export class ArticlesDropdown {
         }
       )
       .toBeTruthy();
+    const article = await this._getArticleFromList(articleName);
+    await expect(
+      article!.getByTestId("article-list-item.article-name")
+    ).toHaveText(articleName);
+    if (categoryName) {
+      await expect(
+        article!.getByTestId("article-list-item.category-name")
+      ).toHaveText(categoryName);
+    }
   }
 
   async selectArticle(name: string) {
@@ -64,5 +73,15 @@ export class ArticlesDropdown {
     await this.verifyArticleInList(name);
     const articleItem = await this._getArticleFromList(name);
     await articleItem?.click();
+  }
+
+  async verifyArticleIsGrayedOut(articleName: string) {
+    if ((await this._articleListbox.isVisible()) === false) {
+      await this._input.click();
+    }
+    await this._awaitLoadingFinished();
+    const article = await this._getArticleFromList(articleName);
+    expect(article).toBeDefined();
+    await expect(article!).toBeDisabled();
   }
 }

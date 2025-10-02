@@ -1,8 +1,15 @@
 import { test } from "../src/fixtures/topBar.fixture";
 import { expect } from "@playwright/test";
+import { TopBarPage } from "../src/pages/topBarPage";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("http://localhost:3000/");
+});
+
+test("add article button is disabled when no article selected", async ({
+  topBarPage,
+}) => {
+  await expect(topBarPage.addArticleButton).toBeDisabled();
 });
 
 test("existing article can be found on dropdown", async ({
@@ -10,7 +17,10 @@ test("existing article can be found on dropdown", async ({
   article,
 }) => {
   await topBarPage.articlesDropdown.typeArticleName(article.name!);
-  await topBarPage.articlesDropdown.verifyArticleInList(article.name!);
+  await topBarPage.articlesDropdown.verifyArticleInList(
+    article.name!,
+    article.category!.name!
+  );
 });
 
 test("user can add existing article", async ({
@@ -20,7 +30,11 @@ test("user can add existing article", async ({
 }) => {
   await topBarPage.articlesDropdown.selectArticle(article.name!);
   await topBarPage.addArticleButton.click();
-  await shoppingCartPage.verifyArticleInShoppingCart(article.name!);
+  await shoppingCartPage.verifyArticleInShoppingCart(
+    article.name!,
+    article.category!.name!
+  );
+  await topBarPage.articlesDropdown.verifyArticleIsGrayedOut(article.name!);
 });
 
 test("user can add new article with existing category", async ({
@@ -46,30 +60,50 @@ test("user can add new article with existing category", async ({
     ),
     await topBarPage.addArticleDialog.apply(),
   ]);
-  await shoppingCartPage.verifyArticleInShoppingCart(article.name!);
+  await shoppingCartPage.verifyArticleInShoppingCart(
+    article.name!,
+    category.name!
+  );
   await articleGenerator.registerGeneratedObjectByName(article);
   await topBarPage.articlesDropdown.typeArticleName(article.name!);
-  await topBarPage.articlesDropdown.verifyArticleInList(article.name!);
+  await topBarPage.articlesDropdown.verifyArticleInList(
+    article.name!,
+    category.name!
+  );
 });
 
-// test("top bar is visible", async ({ page }) => {
-//   await page.goto("http://localhost:3000/");
-
-//   // Click the get started link.
-//   await expect(
-//     page
-//       .locator("header")
-//       .locator(".MuiAutocomplete-root:has-text('Search Article')")
-//   ).toBeVisible();
-// });
-
-// test("search bar is visible", async ({ page }) => {
-//   await page.goto("http://localhost:3000/");
-
-//   // Click the get started link.
-//   await expect(
-//     page
-//       .locator("header")
-//       .locator(".MuiAutocomplete-root:has-text('Search Article')")
-//   ).toBeVisible();
-// });
+test("user can add new article with new category", async ({
+  topBarPage,
+  articleGenerator,
+  categoryGenerator,
+  shoppingCartPage,
+  page,
+}) => {
+  const category = await categoryGenerator.generate();
+  const article = await articleGenerator.generate({
+    category: { name: category.name },
+  });
+  await topBarPage.articlesDropdown.typeArticleName(article.name!);
+  await topBarPage.addArticleButton.click();
+  await topBarPage.addArticleDialog.verifyDialogDisplayed("Add article");
+  await topBarPage.addArticleDialog.verifyApplyDisabled();
+  await topBarPage.addArticleDialog.verifyArticleName(article.name!);
+  await topBarPage.addArticleDialog.category.typeCategoryName(category.name!);
+  await topBarPage.addArticleDialog.verifyApplyEnabled();
+  await Promise.all([
+    page.waitForResponse(
+      (resp) => resp.url().includes("/shoppingCart") && resp.status() === 201
+    ),
+    await topBarPage.addArticleDialog.apply(),
+  ]);
+  await shoppingCartPage.verifyArticleInShoppingCart(
+    article.name!,
+    category.name!
+  );
+  await articleGenerator.registerGeneratedObjectByName(article);
+  await topBarPage.articlesDropdown.typeArticleName(article.name!);
+  await topBarPage.articlesDropdown.verifyArticleInList(
+    article.name!,
+    category.name!
+  );
+});

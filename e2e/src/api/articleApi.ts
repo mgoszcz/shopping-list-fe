@@ -4,7 +4,7 @@ import { Category } from "./categoriesApi";
 export type Article = {
   id: number;
   name: string;
-  category: Category;
+  category: Partial<Category>;
   createdAt?: string;
   updatedAt?: string;
 };

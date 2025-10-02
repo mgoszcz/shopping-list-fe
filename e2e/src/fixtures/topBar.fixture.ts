@@ -17,6 +17,7 @@ type TopBarFixture = {
   shoppingCartApi: ShoppingCartApi;
   category: Partial<Category>;
   articleGenerator: ArticleGenerator;
+  categoryGenerator: CategoryGenerator;
 };
 
 export const test = base.extend<TopBarFixture>({
@@ -57,8 +58,12 @@ export const test = base.extend<TopBarFixture>({
     await use(await articleGenerator.generateAndPost());
   },
 
-  category: async ({ categoriesApi }, use) => {
+  category: async ({ categoryGenerator }, use) => {
+    await use(await categoryGenerator.generateAndPost());
+  },
+
+  categoryGenerator: async ({ categoriesApi }, use) => {
     const generator = new CategoryGenerator(categoriesApi);
-    await use(await generator.generateAndPost());
+    await use(generator);
   },
 });

@@ -82,7 +82,7 @@ const ShoppingCartCard = ({
                 overflow: "hidden",
                 maxWidth: isMobile ? "100%" : "90%",
               }}
-              data-testid="article-name"
+              data-testid="shopping-cart-card.article-name"
             >
               {cartItem.article.name}
             </Typography>
@@ -91,7 +91,7 @@ const ShoppingCartCard = ({
                 variant={"body2"}
                 component={"h4"}
                 marginLeft={2}
-                data-testid="category-name"
+                data-testid="shopping-cart-card.category-name"
               >
                 {cartItem.category.name}
               </Typography>
