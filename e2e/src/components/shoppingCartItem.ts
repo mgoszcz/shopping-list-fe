@@ -22,11 +22,27 @@ export class ShoppingCartItem {
     );
   }
 
+  async getCategoryName() {
+    return await this._articleNameField.textContent();
+  }
+
   async verifyArticleName(expectedName: string) {
     await expect(this._articleNameField).toHaveText(expectedName);
   }
 
   async verifyCategoryName(expectedName: string) {
-    await expect(this._categoryNameField).toHaveText(expectedName);
+    await expect(this._articleNameField).toHaveText(expectedName);
+  }
+
+  async selectArticle() {
+    await this._selectionArea.click();
+  }
+
+  async verifyArticleSelected() {
+    await expect(this._root).toHaveCSS("background-color", "rgb(15, 15, 15)");
+  }
+
+  async verifyArticleNotSelected() {
+    await expect(this._root).toHaveCSS("background-color", "rgb(106, 30, 85)");
   }
 }

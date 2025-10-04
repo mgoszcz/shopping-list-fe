@@ -15,13 +15,23 @@ export class ShoppingCartPage {
   }
 
   private async _getCartItemCard(
-    articleName: string
+    articleName: string,
+    categoryName?: string
   ): Promise<ShoppingCartItem | null> {
     for (const card of await this._root
       .locator(selectors.shoppingCartCard)
       .all()) {
+      let cartItem;
       const name = await card.locator(selectors.articleName).textContent();
-      if (name === articleName) return new ShoppingCartItem(card, articleName);
+      if (name === articleName)
+        cartItem = new ShoppingCartItem(card, articleName);
+      if (categoryName) {
+        if (cartItem && (await cartItem.getCategoryName()) === categoryName) {
+          return cartItem;
+        }
+      } else if (cartItem) {
+        return cartItem;
+      }
     }
     return null;
   }
@@ -40,5 +50,10 @@ export class ShoppingCartPage {
     if (categoryName) {
       await shoppingCartCard?.verifyCategoryName(categoryName);
     }
+  }
+
+  async getCartItem(articleName: string, categoryName?: string) {
+    this.verifyArticleInShoppingCart(articleName, categoryName);
+    return this._getCartItemCard(articleName, categoryName);
   }
 }
