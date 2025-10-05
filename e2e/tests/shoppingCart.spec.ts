@@ -1,3 +1,4 @@
+import { ShoppingCartItem } from "../src/components/shoppingCartItem";
 import { test } from "../src/fixtures/shoppingCart.fixture";
 
 test.beforeEach(async ({ page }) => {
@@ -16,4 +17,42 @@ test("user can toggle article selection", async ({
   await item!.verifyArticleSelected();
   await item!.selectArticle();
   await item!.verifyArticleNotSelected();
+});
+
+test("user can set quantity", async ({
+  shoppingCartItem,
+  shoppingCartPage,
+}) => {
+  const item = await shoppingCartPage.getCartItem(
+    shoppingCartItem.article!.name
+  );
+  await item!.verifyQuantity(1);
+  await item!.setQuantity(3);
+  await item!.verifyQuantity(3);
+});
+
+test("unsorted article is highlighted", async ({
+  shoppingCartItem,
+  shoppingCartPage,
+}) => {
+  const item = await shoppingCartPage.getCartItem(
+    shoppingCartItem.article!.name
+  );
+  await item!.verifyBorderIsDisplayed();
+  await item!.verifyWarningIconDisplayed();
+  await item!.verifyWarningIconTooltip();
+});
+
+test("user can remove item from list", async ({
+  shoppingCartItem,
+  shoppingCartPage,
+}) => {
+  const item = await shoppingCartPage.getCartItem(
+    shoppingCartItem.article!.name
+  );
+  await item!.deleteArticle();
+  await shoppingCartPage.verifyArticleNotInShoppingCart(
+    shoppingCartItem.article!.name,
+    shoppingCartItem.category!.name
+  );
 });

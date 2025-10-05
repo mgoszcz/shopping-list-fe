@@ -17,7 +17,11 @@ export abstract class Generator<T extends Identifiable> {
 
   async cleanup() {
     for (const item of this.createdItems) {
-      await this.apis.main.delete(item.id);
+      try {
+        await this.apis.main.delete(item.id);
+      } catch (error) {
+        console.log(`Cleanup error: ${error}`);
+      }
     }
     this.createdItems = [];
   }

@@ -61,10 +61,7 @@ export class ShoppingCartGenerator extends Generator<ShoppingCartItem> {
   }
 
   async cleanup(): Promise<void> {
-    for (const item of this.createdItems) {
-      await this.apis.main.delete(item.id);
-    }
-    this.createdItems = [];
+    await super.cleanup();
     await this.articleGenerator.cleanup();
   }
 }

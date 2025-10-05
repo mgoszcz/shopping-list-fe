@@ -52,8 +52,22 @@ export class ShoppingCartPage {
     }
   }
 
+  async verifyArticleNotInShoppingCart(
+    articleName: string,
+    categoryName?: string
+  ) {
+    await expect
+      .poll(
+        async () => await this._getCartItemCard(articleName, categoryName),
+        {
+          timeout: 10000,
+        }
+      )
+      .toBeNull();
+  }
+
   async getCartItem(articleName: string, categoryName?: string) {
-    this.verifyArticleInShoppingCart(articleName, categoryName);
+    await this.verifyArticleInShoppingCart(articleName, categoryName);
     return this._getCartItemCard(articleName, categoryName);
   }
 }

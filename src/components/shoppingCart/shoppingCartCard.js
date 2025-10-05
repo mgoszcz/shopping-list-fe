@@ -60,6 +60,7 @@ const ShoppingCartCard = ({
           borderRadius: "5px",
         }}
         marginY={1}
+        data-testid="shopping-cart-card.card-container"
       >
         <CardActionArea
           onClick={() => shoppingCartProcessor.toggleChecked(cartItem)}
