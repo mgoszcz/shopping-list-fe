@@ -32,7 +32,7 @@ export class ArticleGenerator extends Generator<Article> {
     throw new Error(`Article with name ${item.name} does not exist in DB`);
   }
 
-  private async _isArticleInShoppingCart(articleId: number) {
+  private async _removeArticleFromShoppingCart(articleId: number) {
     const shoppingCartItems = await this.apis.shoppingCart.list();
     for (const item of shoppingCartItems) {
       if (item.article.id === articleId) {
@@ -62,8 +62,12 @@ export class ArticleGenerator extends Generator<Article> {
 
   async cleanup(): Promise<void> {
     for (const item of this.createdItems) {
-      await this._isArticleInShoppingCart(item.id);
-      await this.apis.main.delete(item.id);
+      await this._removeArticleFromShoppingCart(item.id);
+      try {
+        await this.apis.main.delete(item.id);
+      } catch (error) {
+        console.log(`Cleanup error: ${error}`);
+      }
     }
     this.createdItems = [];
   }

@@ -5,7 +5,7 @@ const selectors = {
 };
 
 export class BaseDialog {
-  private _root;
+  protected _root;
   private _applyButton: Locator;
   private _cancelButton: Locator;
 

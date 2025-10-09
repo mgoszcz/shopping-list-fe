@@ -1,5 +1,6 @@
 import { expect, Locator, Page } from "@playwright/test";
 import { ShoppingCartItem } from "../components/shoppingCartItem";
+import { EditArticleDialog } from "../dialogs/editArticleDialog";
 
 const selectors = {
   root: '[data-testid="shopping-cart-container"]',
@@ -9,9 +10,11 @@ const selectors = {
 
 export class ShoppingCartPage {
   private _root: Locator;
+  editArticleDialog: EditArticleDialog;
 
   constructor(page: Page) {
     this._root = page.locator(selectors.root);
+    this.editArticleDialog = new EditArticleDialog(page);
   }
 
   private async _getCartItemCard(
@@ -41,11 +44,17 @@ export class ShoppingCartPage {
     categoryName?: string
   ) {
     await expect
-      .poll(async () => await this._getCartItemCard(articleName), {
-        timeout: 10000,
-      })
+      .poll(
+        async () => await this._getCartItemCard(articleName, categoryName),
+        {
+          timeout: 10000,
+        }
+      )
       .not.toBeNull();
-    const shoppingCartCard = await this._getCartItemCard(articleName);
+    const shoppingCartCard = await this._getCartItemCard(
+      articleName,
+      categoryName
+    );
     await shoppingCartCard?.verifyArticleName(articleName);
     if (categoryName) {
       await shoppingCartCard?.verifyCategoryName(categoryName);

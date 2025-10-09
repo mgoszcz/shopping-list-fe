@@ -56,3 +56,60 @@ test("user can remove item from list", async ({
     shoppingCartItem.category!.name
   );
 });
+
+test("user can edit article name", async ({
+  shoppingCartPage,
+  shoppingCartItem,
+  topBarPage,
+}) => {
+  const item = await shoppingCartPage.getCartItem(
+    shoppingCartItem.article!.name
+  );
+  await item!.editArticle();
+  await shoppingCartPage.editArticleDialog.verifyArticleName(
+    shoppingCartItem.article!.name
+  );
+  await shoppingCartPage.editArticleDialog.category.verifySelectedCategory(
+    shoppingCartItem.category!.name!
+  );
+  await shoppingCartPage.editArticleDialog.typeArticleName(
+    `${shoppingCartItem.article!.name} renamed article`
+  );
+  await shoppingCartPage.editArticleDialog.apply();
+  await shoppingCartPage.verifyArticleInShoppingCart(
+    `${shoppingCartItem.article!.name} renamed article`,
+    shoppingCartItem.category!.name!
+  );
+  await shoppingCartPage.verifyArticleNotInShoppingCart(
+    shoppingCartItem.article!.name,
+    shoppingCartItem.category!.name!
+  );
+  await topBarPage.articlesDropdown.verifyArticleInList(
+    `${shoppingCartItem.article!.name} renamed article`,
+    shoppingCartItem.category!.name!
+  );
+  await topBarPage.articlesDropdown.verifyArticleNotInList(
+    shoppingCartItem.article!.name,
+    shoppingCartItem.category!.name!
+  );
+});
+
+test("user can remove article", async ({
+  topBarPage,
+  shoppingCartItem,
+  shoppingCartPage,
+}) => {
+  const item = await shoppingCartPage.getCartItem(
+    shoppingCartItem.article!.name
+  );
+  await item!.editArticle();
+  await shoppingCartPage.editArticleDialog.removeArticle();
+  await shoppingCartPage.verifyArticleNotInShoppingCart(
+    shoppingCartItem.article!.name,
+    shoppingCartItem.category!.name!
+  );
+  await topBarPage.articlesDropdown.verifyArticleNotInList(
+    shoppingCartItem.article!.name,
+    shoppingCartItem.category!.name!
+  );
+});

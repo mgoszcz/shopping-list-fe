@@ -39,7 +39,7 @@ export class ShoppingCartItem {
   }
 
   async verifyCategoryName(expectedName: string) {
-    await expect(this._articleNameField).toHaveText(expectedName);
+    await expect(this._categoryNameField).toHaveText(expectedName);
   }
 
   async selectArticle() {
@@ -48,6 +48,10 @@ export class ShoppingCartItem {
 
   async deleteArticle() {
     await this._root.getByTestId("delete-article-button").click();
+  }
+
+  async editArticle() {
+    await this._root.getByTestId("edit-article-button").click();
   }
 
   async verifyArticleSelected() {

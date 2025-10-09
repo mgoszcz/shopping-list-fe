@@ -18,12 +18,22 @@ export class ArticlesDropdown {
     this._articleListbox = page.locator(selectors.articleListbox);
   }
 
-  private async _getArticleFromList(name: string): Promise<Locator | null> {
+  private async _getArticleFromList(
+    name: string,
+    category?: string
+  ): Promise<Locator | null> {
     const items = await this._articleListbox.locator("li").all();
     for (const li of items) {
       const articleName = await li.locator("h5").textContent();
+      const categoryName = await li.locator("h6").textContent();
       if (articleName?.trim() === name) {
-        return li;
+        if (category && categoryName?.trim() === category) {
+          return li;
+        } else if (!category) {
+          return li;
+        } else {
+          // do nothing
+        }
       }
     }
     return null;
@@ -49,7 +59,10 @@ export class ArticlesDropdown {
     await expect
       .poll(
         async () => {
-          const article = await this._getArticleFromList(articleName);
+          const article = await this._getArticleFromList(
+            articleName,
+            categoryName
+          );
           return article;
         },
         {
@@ -57,7 +70,7 @@ export class ArticlesDropdown {
         }
       )
       .toBeTruthy();
-    const article = await this._getArticleFromList(articleName);
+    const article = await this._getArticleFromList(articleName, categoryName);
     await expect(
       article!.getByTestId("article-list-item.article-name")
     ).toHaveText(articleName);
@@ -68,20 +81,34 @@ export class ArticlesDropdown {
     }
   }
 
-  async selectArticle(name: string) {
+  async selectArticle(name: string, categoryName?: string) {
     await this.typeArticleName(name);
     await this.verifyArticleInList(name);
-    const articleItem = await this._getArticleFromList(name);
+    const articleItem = await this._getArticleFromList(name, categoryName);
     await articleItem?.click();
   }
 
-  async verifyArticleIsGrayedOut(articleName: string) {
+  async verifyArticleIsGrayedOut(articleName: string, categoryName: string) {
     if ((await this._articleListbox.isVisible()) === false) {
       await this._input.click();
     }
     await this._awaitLoadingFinished();
-    const article = await this._getArticleFromList(articleName);
+    const article = await this._getArticleFromList(articleName, categoryName);
     expect(article).toBeDefined();
     await expect(article!).toBeDisabled();
+  }
+
+  async verifyArticleNotInList(articleName: string, categoryName?: string) {
+    if ((await this._articleListbox.isVisible()) === false) {
+      await this._input.click();
+    }
+    await expect
+      .poll(
+        async () => await this._getArticleFromList(articleName, categoryName),
+        {
+          timeout: 10000,
+        }
+      )
+      .toBeNull();
   }
 }

@@ -61,4 +61,8 @@ export class CategoriesDropdown {
     const categoryItem = await this._getCategoryFromList(name);
     await categoryItem?.click();
   }
+
+  async verifySelectedCategory(expectedName: string) {
+    await expect(this._input).toHaveValue(expectedName);
+  }
 }
