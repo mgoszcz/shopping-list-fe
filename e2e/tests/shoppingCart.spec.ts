@@ -1,5 +1,6 @@
 import { ShoppingCartItem } from "../src/components/shoppingCartItem";
 import { test } from "../src/fixtures/shoppingCart.fixture";
+import { ShoppingCartPage } from "../src/pages/shoppingCartPage";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("http://localhost:3000/");
@@ -84,6 +85,9 @@ test("user can edit article name", async ({
     shoppingCartItem.article!.name,
     shoppingCartItem.category!.name!
   );
+  await topBarPage.articlesDropdown.typeArticleName(
+    shoppingCartItem.article!.name
+  );
   await topBarPage.articlesDropdown.verifyArticleInList(
     `${shoppingCartItem.article!.name} renamed article`,
     shoppingCartItem.category!.name!
@@ -107,6 +111,89 @@ test("user can remove article", async ({
   await shoppingCartPage.verifyArticleNotInShoppingCart(
     shoppingCartItem.article!.name,
     shoppingCartItem.category!.name!
+  );
+  await topBarPage.articlesDropdown.verifyArticleNotInList(
+    shoppingCartItem.article!.name,
+    shoppingCartItem.category!.name!
+  );
+});
+
+test("user can edit article category - existing", async ({
+  shoppingCartPage,
+  shoppingCartItem,
+  topBarPage,
+  category,
+}) => {
+  const item = await shoppingCartPage.getCartItem(
+    shoppingCartItem.article!.name
+  );
+  await item!.editArticle();
+  await shoppingCartPage.editArticleDialog.verifyArticleName(
+    shoppingCartItem.article!.name
+  );
+  await shoppingCartPage.editArticleDialog.category.verifySelectedCategory(
+    shoppingCartItem.category!.name!
+  );
+  await shoppingCartPage.editArticleDialog.category.selectCategory(
+    category.name!
+  );
+  await shoppingCartPage.editArticleDialog.apply();
+  await shoppingCartPage.verifyArticleInShoppingCart(
+    shoppingCartItem.article!.name,
+    category.name!
+  );
+  await shoppingCartPage.verifyArticleNotInShoppingCart(
+    shoppingCartItem.article!.name,
+    shoppingCartItem.category!.name!
+  );
+  await topBarPage.articlesDropdown.typeArticleName(
+    shoppingCartItem.article!.name
+  );
+  await topBarPage.articlesDropdown.verifyArticleInList(
+    shoppingCartItem.article!.name,
+    category.name!
+  );
+  await topBarPage.articlesDropdown.verifyArticleNotInList(
+    shoppingCartItem.article!.name,
+    shoppingCartItem.category!.name!
+  );
+});
+
+test("user can edit article category - new", async ({
+  shoppingCartPage,
+  shoppingCartItem,
+  topBarPage,
+  categoryGenerator,
+}) => {
+  const item = await shoppingCartPage.getCartItem(
+    shoppingCartItem.article!.name
+  );
+  const newCategory = await categoryGenerator.generate();
+  await item!.editArticle();
+  await shoppingCartPage.editArticleDialog.verifyArticleName(
+    shoppingCartItem.article!.name
+  );
+  await shoppingCartPage.editArticleDialog.category.verifySelectedCategory(
+    shoppingCartItem.category!.name!
+  );
+  await shoppingCartPage.editArticleDialog.category.typeCategoryName(
+    newCategory.name!
+  );
+  await shoppingCartPage.editArticleDialog.apply();
+  await shoppingCartPage.verifyArticleInShoppingCart(
+    shoppingCartItem.article!.name,
+    newCategory.name!
+  );
+  await shoppingCartPage.verifyArticleNotInShoppingCart(
+    shoppingCartItem.article!.name,
+    shoppingCartItem.category!.name!
+  );
+  await topBarPage.articlesDropdown.typeArticleName(
+    shoppingCartItem.article!.name
+  );
+  await topBarPage.articlesDropdown.verifyArticleInList(
+    shoppingCartItem.article!.name,
+    newCategory.name!
   );
   await topBarPage.articlesDropdown.verifyArticleNotInList(
     shoppingCartItem.article!.name,

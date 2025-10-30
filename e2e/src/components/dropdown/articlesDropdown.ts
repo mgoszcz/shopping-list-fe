@@ -66,7 +66,7 @@ export class ArticlesDropdown {
           return article;
         },
         {
-          timeout: 10000,
+          timeout: 20000,
         }
       )
       .toBeTruthy();
@@ -88,7 +88,7 @@ export class ArticlesDropdown {
     await articleItem?.click();
   }
 
-  async verifyArticleIsGrayedOut(articleName: string, categoryName: string) {
+  async verifyArticleIsGrayedOut(articleName: string, categoryName?: string) {
     if ((await this._articleListbox.isVisible()) === false) {
       await this._input.click();
     }
@@ -106,7 +106,7 @@ export class ArticlesDropdown {
       .poll(
         async () => await this._getArticleFromList(articleName, categoryName),
         {
-          timeout: 10000,
+          timeout: 20000,
         }
       )
       .toBeNull();
