@@ -5,10 +5,14 @@ import { ShoppingCartPage } from "../pages/shoppingCartPage";
 import { Article, ArticleApi } from "../api/articleApi";
 import { CategoriesApi, Category } from "../api/categoriesApi";
 import { baseUrl } from "../consts/urls";
-import { ShoppingCartApi } from "../api/shoppingCartApi";
+import { ShoppingCartApi, ShoppingCartItem } from "../api/shoppingCartApi";
 import { CategoryGenerator } from "../generators/categoryGenerator";
+import { ShoppingCartGenerator } from "../generators/shoppingCartGenerator";
+import { BottomBarPage } from "../pages/bottomBarPage";
+import { ShopsGenerator } from "../generators/ShopsGenerator";
+import { Shop, ShopsApi } from "../api/shopsApi";
 
-type TopBarFixture = {
+type TestFixture = {
   topBarPage: TopBarPage;
   article: Partial<Article>;
   shoppingCartPage: ShoppingCartPage;
@@ -18,9 +22,15 @@ type TopBarFixture = {
   category: Partial<Category>;
   articleGenerator: ArticleGenerator;
   categoryGenerator: CategoryGenerator;
+  shoppingCartItem: Partial<ShoppingCartItem>;
+  shoppingCartGenerator: ShoppingCartGenerator;
+  bottomBarPage: BottomBarPage;
+  shopsApi: ShopsApi;
+  shopsGenerator: ShopsGenerator;
+  shop: Partial<Shop>;
 };
 
-export const test = base.extend<TopBarFixture>({
+export const test = base.extend<TestFixture>({
   topBarPage: async ({ page }, use) => {
     await use(new TopBarPage(page));
   },
@@ -65,5 +75,37 @@ export const test = base.extend<TopBarFixture>({
   categoryGenerator: async ({ categoriesApi }, use) => {
     const generator = new CategoryGenerator(categoriesApi);
     await use(generator);
+  },
+
+  shoppingCartItem: async ({ shoppingCartGenerator }, use) => {
+    await use(await shoppingCartGenerator.generateAndPost());
+  },
+
+  shoppingCartGenerator: async (
+    { shoppingCartApi, articlesApi, categoriesApi },
+    use
+  ) => {
+    const generator = new ShoppingCartGenerator(
+      shoppingCartApi,
+      articlesApi,
+      categoriesApi
+    );
+    await use(generator);
+    await generator.cleanup();
+  },
+
+  shopsApi: async ({}, use) => {
+    await use(new ShopsApi(baseUrl));
+  },
+
+  shopsGenerator: async ({ shopsApi }, use) => {
+    const generator = new ShopsGenerator(shopsApi);
+    await use(generator);
+    await generator.cleanup();
+  },
+
+  shop: async ({ shopsGenerator }, use) => {
+    const shop = await shopsGenerator.generateAndPost();
+    await use(shop);
   },
 });

@@ -1,6 +1,6 @@
 import { expect, Locator } from "@playwright/test";
 
-export class ConfirmationDialog {
+export class ConfirmationTooltipDialog {
   private confirmationRoot: Locator;
   constructor(root: Locator) {
     this.confirmationRoot = root.getByRole("tooltip");

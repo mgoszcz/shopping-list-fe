@@ -152,6 +152,7 @@ export const BottomBar = ({
             backgroundColor: "#3B1C32",
             marginX: "auto",
           }}
+          data-testid="bottom-bar"
         >
           <Toolbar>
             <Box></Box>

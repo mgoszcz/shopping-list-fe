@@ -3,7 +3,7 @@ import { ArticlesDropdown } from "../components/dropdown/articlesDropdown";
 import { AddArticleDialog } from "../dialogs/addArticleDialog";
 
 const selectors = {
-  toolbar: ".MuiToolbar-root",
+  toolbar: '[data-testid="top-bar"]',
   addArticleButton: 'button[data-testid="add-article-to-cart"]',
 };
 

@@ -1,6 +1,4 @@
-import { ShoppingCartItem } from "../src/components/shoppingCartItem";
-import { test } from "../src/fixtures/shoppingCart.fixture";
-import { ShoppingCartPage } from "../src/pages/shoppingCartPage";
+import { test } from "../src/fixtures/test.fixture";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("http://localhost:3000/");

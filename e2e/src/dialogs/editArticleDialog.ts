@@ -1,17 +1,17 @@
 import { Locator, Page } from "@playwright/test";
 import { AddArticleDialog } from "./addArticleDialog";
-import { ConfirmationDialog } from "./confirmationDialog";
+import { ConfirmationTooltipDialog } from "./confirmationTooltipDialog";
 
 export class EditArticleDialog extends AddArticleDialog {
   private removeArticleButton: Locator;
-  private confirmationDialog: ConfirmationDialog;
+  private confirmationDialog: ConfirmationTooltipDialog;
 
   constructor(page: Page) {
     super(page);
     this.removeArticleButton = this._root.getByRole("button", {
       name: "Remove Article",
     });
-    this.confirmationDialog = new ConfirmationDialog(this._root);
+    this.confirmationDialog = new ConfirmationTooltipDialog(this._root);
   }
 
   async removeArticle() {

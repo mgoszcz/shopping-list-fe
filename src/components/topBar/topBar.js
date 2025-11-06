@@ -47,6 +47,7 @@ export default function TopBar({
       <AppBar
         position="static"
         sx={{ minWidth: 400, backgroundColor: "#3B1C32" }}
+        data-testid="top-bar"
       >
         <Toolbar>
           <SearchDropDownInput
