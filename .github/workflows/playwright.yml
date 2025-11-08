@@ -19,8 +19,9 @@ jobs:
       - name: Run application
         run: npm run start:development
       - name: Run Playwright tests
-        run: npx playwright test
-
+        run: npx playwright test &
+      - name: sleep 30 seconds
+        run: sleep 30
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
