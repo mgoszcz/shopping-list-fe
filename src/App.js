@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ShoppingCartPage from "./pages/shoppingCartPage";
 import { createTheme, ThemeProvider } from "@mui/material";
 import { getTimestampData } from "./data/api/timestampData";
@@ -43,30 +43,20 @@ function App() {
   const [editingArticle, setEditingArticle] = useState({});
   const [sendingData, setSendingData] = useState(false);
 
-  const shoppingCartProcessor = useMemo(
-    () =>
-      new ShoppingCartDataProcessor(
-        shoppingCart,
-        setShoppingCart,
-        shoppingCartSyncState,
-        setShoppingCartSyncState
-      ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+  const shoppingCartProcessor = new ShoppingCartDataProcessor(
+    shoppingCart,
+    setShoppingCart,
+    shoppingCartSyncState,
+    setShoppingCartSyncState
   );
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const articlesProcessor = useMemo(
-    () =>
-      new ShoppingArticlesProcessor(
-        articles,
-        setArticles,
-        shoppingCartProcessor,
-        articlesSynchState,
-        setArticlesSyncState
-      ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+  const articlesProcessor = new ShoppingArticlesProcessor(
+    articles,
+    setArticles,
+    shoppingCartProcessor,
+    articlesSynchState,
+    setArticlesSyncState
   );
 
   useEffect(() => {
@@ -88,11 +78,13 @@ function App() {
 
   useEffect(() => {
     shoppingCartProcessor.getShoppingCartItems();
-  }, [shoppingCartProcessor, shoppingCartTimestamp, currentShop]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shoppingCartTimestamp, currentShop]);
 
   useEffect(() => {
     articlesProcessor.getShoppingArticlesData();
-  }, [articlesProcessor, articlesTimestamp]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [articlesTimestamp]);
 
   useEffect(() => {
     getCurrentShop()
