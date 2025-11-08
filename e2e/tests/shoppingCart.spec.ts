@@ -163,10 +163,10 @@ test("user can edit article category - new", async ({
   topBarPage,
   categoryGenerator,
 }) => {
+  const newCategory = await categoryGenerator.generate();
   const item = await shoppingCartPage.getCartItem(
     shoppingCartItem.article!.name
   );
-  const newCategory = await categoryGenerator.generate();
   await item!.editArticle();
   await shoppingCartPage.editArticleDialog.verifyArticleName(
     shoppingCartItem.article!.name

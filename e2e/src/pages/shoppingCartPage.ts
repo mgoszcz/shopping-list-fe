@@ -79,4 +79,13 @@ export class ShoppingCartPage {
     await this.verifyArticleInShoppingCart(articleName, categoryName);
     return this._getCartItemCard(articleName, categoryName);
   }
+
+  async waitForItemsCount(expectedCount: number) {
+    await expect
+      .poll(
+        async () => await this._root.locator(selectors.shoppingCartCard).all(),
+        { timeout: 10000 }
+      )
+      .toHaveLength(expectedCount);
+  }
 }

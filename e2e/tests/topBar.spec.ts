@@ -1,6 +1,5 @@
-import { test } from "../src/fixtures/topBar.fixture";
+import { test } from "../src/fixtures/test.fixture";
 import { expect } from "@playwright/test";
-import { TopBarPage } from "../src/pages/topBarPage";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("http://localhost:3000/");

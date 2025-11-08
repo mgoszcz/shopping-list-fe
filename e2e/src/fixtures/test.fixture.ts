@@ -11,6 +11,7 @@ import { ShoppingCartGenerator } from "../generators/shoppingCartGenerator";
 import { BottomBarPage } from "../pages/bottomBarPage";
 import { ShopsGenerator } from "../generators/ShopsGenerator";
 import { Shop, ShopsApi } from "../api/shopsApi";
+import { CurrentShopApi } from "../api/currentShopApi";
 
 type TestFixture = {
   topBarPage: TopBarPage;
@@ -28,6 +29,7 @@ type TestFixture = {
   shopsApi: ShopsApi;
   shopsGenerator: ShopsGenerator;
   shop: Partial<Shop>;
+  currentShopApi: CurrentShopApi;
 };
 
 export const test = base.extend<TestFixture>({
@@ -37,6 +39,10 @@ export const test = base.extend<TestFixture>({
 
   shoppingCartPage: async ({ page }, use) => {
     await use(new ShoppingCartPage(page));
+  },
+
+  bottomBarPage: async ({ page }, use) => {
+    await use(new BottomBarPage(page));
   },
 
   articlesApi: async ({}, use) => {
@@ -49,6 +55,10 @@ export const test = base.extend<TestFixture>({
 
   shoppingCartApi: async ({}, use) => {
     await use(new ShoppingCartApi(baseUrl));
+  },
+
+  currentShopApi: async ({}, use) => {
+    await use(new CurrentShopApi(baseUrl));
   },
 
   articleGenerator: async (
@@ -98,14 +108,15 @@ export const test = base.extend<TestFixture>({
     await use(new ShopsApi(baseUrl));
   },
 
-  shopsGenerator: async ({ shopsApi }, use) => {
-    const generator = new ShopsGenerator(shopsApi);
+  shopsGenerator: async ({ shopsApi, currentShopApi }, use) => {
+    const generator = new ShopsGenerator(shopsApi, currentShopApi);
     await use(generator);
     await generator.cleanup();
   },
 
   shop: async ({ shopsGenerator }, use) => {
     const shop = await shopsGenerator.generateAndPost();
+    await shopsGenerator.setCurrentShop(shop);
     await use(shop);
   },
 });

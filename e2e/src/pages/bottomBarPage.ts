@@ -2,6 +2,7 @@ import { Locator, Page } from "@playwright/test";
 import { ShopsDropdown } from "../components/dropdown/shopsDropdown";
 import { AddShopDialog } from "../dialogs/AddShopDialog";
 import { ConfirmationDialogBase } from "../dialogs/confirmationDialogBase";
+import { EditShopDialog } from "../dialogs/editShopDialog";
 
 export class BottomBarPage {
   private bottomBarRoot: Locator;
@@ -11,6 +12,7 @@ export class BottomBarPage {
   editButton: Locator;
   addShopDialog: AddShopDialog;
   confirmRemovalDialog: ConfirmationDialogBase;
+  editShopDialog: EditShopDialog;
 
   constructor(page: Page) {
     this.bottomBarRoot = page.locator('[data-testid="bottom-bar"]');
@@ -27,6 +29,7 @@ export class BottomBarPage {
     this.editButton = this.bottomBarRoot.getByRole("button", { name: /edit/i });
     this.addShopDialog = new AddShopDialog(page);
     this.confirmRemovalDialog = new ConfirmationDialogBase(page);
+    this.editShopDialog = new EditShopDialog(page);
   }
 
   async addNewShop(shopName: string) {

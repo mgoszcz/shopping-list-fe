@@ -60,6 +60,13 @@ export class ShoppingCartGenerator extends Generator<ShoppingCartItem> {
     return generatedItem;
   }
 
+  async setCheckedValue(item: Partial<ShoppingCartItem>, checked: boolean) {
+    if (!item.id) {
+      throw new Error("Id is required");
+    }
+    await this.apis.main.update(item.id.toString(), { checked });
+  }
+
   async cleanup(): Promise<void> {
     await super.cleanup();
     await this.articleGenerator.cleanup();

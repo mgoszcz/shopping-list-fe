@@ -16,7 +16,7 @@ export class ShopsDropdown {
   }
 
   async verifyCurrentShop(expectedName: string) {
-    await expect(this.input).toHaveValue(expectedName);
+    await expect(this.input).toHaveValue(expectedName, { timeout: 10000 });
   }
 
   async verifyShopOnTheList(shopName: string) {
@@ -36,6 +36,23 @@ export class ShopsDropdown {
       .toBeTruthy();
   }
 
+  async verifyShopNotOnTheList(shopName: string) {
+    if ((await this.shopsListBox.isVisible()) === false) {
+      await this.input.click();
+    }
+    await expect
+      .poll(
+        async () => {
+          const shop = await this.getShopFromList(shopName);
+          return shop;
+        },
+        {
+          timeout: 10000,
+        }
+      )
+      .toBeNull();
+  }
+
   async selectCurrentShop(shopName: string) {
     if ((await this.shopsListBox.isVisible()) === false) {
       await this.input.click();
@@ -46,6 +63,9 @@ export class ShopsDropdown {
   }
 
   async clickAddShop() {
+    if ((await this.shopsListBox.isVisible()) === false) {
+      await this.input.click();
+    }
     const item = await this.getShopFromList("Add Shop...");
     await item!.click();
   }
