@@ -23,5 +23,4 @@ export function ProgressOverlay({ loading }) {
       </Backdrop>
     )
   );
-  s;
 }
