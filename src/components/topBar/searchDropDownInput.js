@@ -34,6 +34,7 @@ export default function SearchDropDownInput({
     setOpen(true);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (articlesProcessor.synchronizationState === synchState.FETCHING) {
       setLoading(true);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ShoppingCartPage from "./pages/shoppingCartPage";
 import { createTheme, ThemeProvider } from "@mui/material";
 import { getTimestampData } from "./data/api/timestampData";
@@ -43,6 +43,32 @@ function App() {
   const [editingArticle, setEditingArticle] = useState({});
   const [sendingData, setSendingData] = useState(false);
 
+  const shoppingCartProcessor = useMemo(
+    () =>
+      new ShoppingCartDataProcessor(
+        shoppingCart,
+        setShoppingCart,
+        shoppingCartSyncState,
+        setShoppingCartSyncState
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const articlesProcessor = useMemo(
+    () =>
+      new ShoppingArticlesProcessor(
+        articles,
+        setArticles,
+        shoppingCartProcessor,
+        articlesSynchState,
+        setArticlesSyncState
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
   useEffect(() => {
     const fetchTimestampData = async () =>
       getTimestampData()
@@ -62,11 +88,11 @@ function App() {
 
   useEffect(() => {
     shoppingCartProcessor.getShoppingCartItems();
-  }, [shoppingCartTimestamp, currentShop]);
+  }, [shoppingCartProcessor, shoppingCartTimestamp, currentShop]);
 
   useEffect(() => {
     articlesProcessor.getShoppingArticlesData();
-  }, [articlesTimestamp]);
+  }, [articlesProcessor, articlesTimestamp]);
 
   useEffect(() => {
     getCurrentShop()
@@ -77,31 +103,19 @@ function App() {
       .catch((error) => logger.error("Failed to get current shop", error));
   }, [currentShopTimestamp]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (
       articlesSynchState === synchState.SENDING ||
       shoppingCartSyncState === synchState.SENDING
     ) {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       setSendingData(true);
     } else {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       setSendingData(false);
     }
   });
-
-  const shoppingCartProcessor = new ShoppingCartDataProcessor(
-    shoppingCart,
-    setShoppingCart,
-    shoppingCartSyncState,
-    setShoppingCartSyncState
-  );
-
-  const articlesProcessor = new ShoppingArticlesProcessor(
-    articles,
-    setArticles,
-    shoppingCartProcessor,
-    articlesSynchState,
-    setArticlesSyncState
-  );
 
   return (
     <ThemeProvider theme={darkTheme}>
