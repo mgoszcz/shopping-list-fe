@@ -18,7 +18,13 @@ test("Clear list button", async ({
     await shoppingCartGenerator.generateAndPost(),
   ];
   await shoppingCartGenerator.setCheckedValue(checkedItem, true);
-  await shoppingCartPage.waitForItemsCount(3);
+  await shoppingCartPage.verifyArticleInShoppingCart(checkedItem.article!.name);
+  await shoppingCartPage.verifyArticleInShoppingCart(
+    unCheckedItems[0].article!.name
+  );
+  await shoppingCartPage.verifyArticleInShoppingCart(
+    unCheckedItems[1].article!.name
+  );
   await bottomBarPage.clearListButton.click();
   await shoppingCartPage.verifyArticleNotInShoppingCart(
     checkedItem.article!.name
