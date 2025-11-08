@@ -17,11 +17,11 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run application
-        run: npm run start:development
-      - name: Run Playwright tests
-        run: npx playwright test &
+        run: npm run start:development &
       - name: sleep 30 seconds
         run: sleep 30
+      - name: Run Playwright tests
+        run: npx playwright test
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
