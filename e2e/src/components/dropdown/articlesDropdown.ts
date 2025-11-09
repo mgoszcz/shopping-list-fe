@@ -104,7 +104,10 @@ export class ArticlesDropdown {
     }
     await expect
       .poll(
-        async () => await this._getArticleFromList(articleName, categoryName),
+        async () => {
+          await this.typeArticleName(articleName);
+          return await this._getArticleFromList(articleName, categoryName);
+        },
         {
           timeout: 20000,
         }
