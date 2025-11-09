@@ -2,10 +2,6 @@ import { expect, Locator, Page } from "@playwright/test";
 import { BaseDialog } from "./baseDialog";
 import { CategoriesDropdown } from "../components/dropdown/categoriesDropdown";
 
-const selectors = {
-  articleNameRoot: 'div.MuiFormControl-root:has-text("Article Name")',
-};
-
 export class AddArticleDialog extends BaseDialog {
   private _articleName: Locator;
   private _category: CategoriesDropdown;
@@ -13,7 +9,7 @@ export class AddArticleDialog extends BaseDialog {
   constructor(page: Page) {
     super(page);
     this._articleName = page
-      .locator(selectors.articleNameRoot)
+      .locator('div.MuiFormControl-root:has-text("Article Name")')
       .locator("input");
     this._category = new CategoriesDropdown(page);
   }

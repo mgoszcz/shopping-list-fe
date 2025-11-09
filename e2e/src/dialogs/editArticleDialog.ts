@@ -9,7 +9,7 @@ export class EditArticleDialog extends AddArticleDialog {
   constructor(page: Page) {
     super(page);
     this.removeArticleButton = this._root.getByRole("button", {
-      name: "Remove Article",
+      name: /remove article/i,
     });
     this.confirmationDialog = new ConfirmationTooltipDialog(this._root);
   }

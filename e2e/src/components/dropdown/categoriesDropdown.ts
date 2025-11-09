@@ -1,17 +1,14 @@
 import { expect, Locator, Page } from "@playwright/test";
 
-const selectors = {
-  input: "input#category-select",
-  categoriesListbox: ".MuiPopper-root ul#category-select-listbox",
-};
-
 export class CategoriesDropdown {
   private _input: Locator;
   private _categoriesListbox: Locator;
 
   constructor(page: Page) {
-    this._input = page.locator(selectors.input);
-    this._categoriesListbox = page.locator(selectors.categoriesListbox);
+    this._input = page.locator("input#category-select");
+    this._categoriesListbox = page.locator(
+      ".MuiPopper-root ul#category-select-listbox"
+    );
   }
 
   private async _getCategoryFromList(name: string): Promise<Locator | null> {

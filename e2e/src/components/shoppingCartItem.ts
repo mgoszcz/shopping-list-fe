@@ -1,29 +1,28 @@
 import { expect, Locator } from "@playwright/test";
 
-const selectors = {
-  selectionArea: "button.MuiCardActionArea-root",
-  quantityInput: "#amount-input",
-  warningButton: "button:has([data-testid='ReportIcon'])",
-};
-
 export class ShoppingCartItem {
   private _selectionArea: Locator;
   private _articleNameField: Locator;
   private _categoryNameField: Locator;
   private _quantityField: Locator;
+  private readonly warningButton = "button:has([data-testid='ReportIcon'])";
+  private readonly deleteArticleButtonTestId = "delete-article-button";
+  private readonly editArticleButtonTestId = "edit-article-button";
+  private readonly cartcontainerTestId = "shopping-cart-card.card-container";
+  private readonly tooltipSelector = ".MuiTooltip-tooltip";
 
   constructor(
     private _root: Locator,
     private _articleName: string
   ) {
-    this._selectionArea = this._root.locator(selectors.selectionArea);
+    this._selectionArea = this._root.locator("button.MuiCardActionArea-root");
     this._articleNameField = this._root.getByTestId(
       "shopping-cart-card.article-name"
     );
     this._categoryNameField = this._root.getByTestId(
       "shopping-cart-card.category-name"
     );
-    this._quantityField = this._root.locator(selectors.quantityInput);
+    this._quantityField = this._root.locator("#amount-input");
   }
 
   async getCategoryName() {
@@ -47,11 +46,11 @@ export class ShoppingCartItem {
   }
 
   async deleteArticle() {
-    await this._root.getByTestId("delete-article-button").click();
+    await this._root.getByTestId(this.deleteArticleButtonTestId).click();
   }
 
   async editArticle() {
-    await this._root.getByTestId("edit-article-button").click();
+    await this._root.getByTestId(this.editArticleButtonTestId).click();
   }
 
   async verifyArticleSelected() {
@@ -67,17 +66,17 @@ export class ShoppingCartItem {
   }
 
   async verifyBorderIsDisplayed() {
-    const box = this._root.getByTestId("shopping-cart-card.card-container");
+    const box = this._root.getByTestId(this.cartcontainerTestId);
     await expect(box).toHaveCSS("border", "5px dashed rgb(190, 30, 85)");
   }
 
   async verifyWarningIconDisplayed() {
-    await expect(this._root.locator(selectors.warningButton)).toBeVisible();
+    await expect(this._root.locator(this.warningButton)).toBeVisible();
   }
 
   async verifyWarningIconTooltip() {
-    await this._root.locator(selectors.warningButton).click();
-    await expect(this._root.locator(".MuiTooltip-tooltip")).toContainText(
+    await this._root.locator(this.warningButton).click();
+    await expect(this._root.locator(this.tooltipSelector)).toContainText(
       "Category is not ordered in current shop. To order go to the bottom bar and click on button"
     );
   }

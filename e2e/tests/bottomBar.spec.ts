@@ -10,7 +10,6 @@ test("Clear list button", async ({
   bottomBarPage,
   shoppingCartPage,
   shoppingCartGenerator,
-  shop,
 }) => {
   const checkedItem = await shoppingCartGenerator.generateAndPost();
   const unCheckedItems = [

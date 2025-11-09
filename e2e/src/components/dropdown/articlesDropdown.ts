@@ -1,21 +1,16 @@
 import { expect, Locator, Page } from "@playwright/test";
 
-const selectors = {
-  root: '[data-testid="search-article-input"]',
-  label: "label.MuiFormLabel-root",
-  input: "input#search-article",
-  articleListbox: ".MuiPopper-root ul#search-article-listbox",
-};
-
 export class ArticlesDropdown {
   private _root: Locator;
   private _input: Locator;
   private _articleListbox: Locator;
 
   constructor(page: Page) {
-    this._root = page.locator(selectors.root);
-    this._input = this._root.locator(selectors.input);
-    this._articleListbox = page.locator(selectors.articleListbox);
+    this._root = page.locator('[data-testid="search-article-input"]');
+    this._input = this._root.locator("input#search-article");
+    this._articleListbox = page.locator(
+      ".MuiPopper-root ul#search-article-listbox"
+    );
   }
 
   private async _getArticleFromList(

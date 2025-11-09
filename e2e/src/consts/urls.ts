@@ -2,7 +2,7 @@ export const baseUrl = "https://shopping-list-be-development.up.railway.app";
 export const categoriesEndpoint = `${baseUrl}/categories`;
 export const currentShopEndpoint = `${baseUrl}/currentShop`;
 export const shopsEndpoint = `${baseUrl}/shops`;
-export const shopCategoriesEndpoint = (shopId) =>
+export const shopCategoriesEndpoint = (shopId: string) =>
   `${baseUrl}/shops/${shopId}/categories`;
 export const shoppingArticlesEndpoint = `${baseUrl}/shoppingArticles`;
 export const shoppingCartEndpoint = `${baseUrl}/shoppingCart`;

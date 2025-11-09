@@ -2,18 +2,15 @@ import { expect, Locator, Page } from "@playwright/test";
 import { ShoppingCartItem } from "../components/shoppingCartItem";
 import { EditArticleDialog } from "../dialogs/editArticleDialog";
 
-const selectors = {
-  root: '[data-testid="shopping-cart-container"]',
-  shoppingCartCard: ".shopping-cart-card",
-  articleName: '[data-testid="shopping-cart-card.article-name"]',
-};
-
 export class ShoppingCartPage {
   private _root: Locator;
   editArticleDialog: EditArticleDialog;
+  private shoppingCartCardSelector = ".shopping-cart-card";
+  private articleNameSelector =
+    '[data-testid="shopping-cart-card.article-name"]';
 
   constructor(page: Page) {
-    this._root = page.locator(selectors.root);
+    this._root = page.locator('[data-testid="shopping-cart-container"]');
     this.editArticleDialog = new EditArticleDialog(page);
   }
 
@@ -22,10 +19,10 @@ export class ShoppingCartPage {
     categoryName?: string
   ): Promise<ShoppingCartItem | null> {
     for (const card of await this._root
-      .locator(selectors.shoppingCartCard)
+      .locator(this.shoppingCartCardSelector)
       .all()) {
       let cartItem;
-      const name = await card.locator(selectors.articleName).textContent();
+      const name = await card.locator(this.articleNameSelector).textContent();
       if (name === articleName)
         cartItem = new ShoppingCartItem(card, articleName);
       if (categoryName) {
@@ -78,14 +75,5 @@ export class ShoppingCartPage {
   async getCartItem(articleName: string, categoryName?: string) {
     await this.verifyArticleInShoppingCart(articleName, categoryName);
     return this._getCartItemCard(articleName, categoryName);
-  }
-
-  async waitForItemsCount(expectedCount: number) {
-    await expect
-      .poll(
-        async () => await this._root.locator(selectors.shoppingCartCard).all(),
-        { timeout: 10000 }
-      )
-      .toHaveLength(expectedCount);
   }
 }

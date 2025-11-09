@@ -1,9 +1,5 @@
 import { expect, Locator, Page } from "@playwright/test";
 
-const selectors = {
-  applyButton: '[role="button"]',
-};
-
 export class BaseDialog {
   protected _root;
   private _applyButton: Locator;

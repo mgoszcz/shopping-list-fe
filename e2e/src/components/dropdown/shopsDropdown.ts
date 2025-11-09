@@ -1,5 +1,4 @@
 import { expect, Locator, Page } from "@playwright/test";
-import { AddShopDialog } from "../../dialogs/AddShopDialog";
 
 export class ShopsDropdown {
   private label: Locator;
