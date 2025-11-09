@@ -32,3 +32,5 @@ yarn-error.log*
 
 # Playwright
 node_modules/
+
+.vscode/
