@@ -109,4 +109,8 @@ export class ArticlesDropdown {
       )
       .toBeNull();
   }
+
+  async hitEnterInSearch() {
+    await this._input.press("Enter");
+  }
 }

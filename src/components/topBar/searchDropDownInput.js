@@ -22,6 +22,7 @@ export default function SearchDropDownInput({
   shoppingCart,
   setAddButtonDisabled,
   articlesProcessor,
+  onEnterAdd,
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -80,6 +81,15 @@ export default function SearchDropDownInput({
   };
 
   const handleSelect = (event, newValue) => {
+    if (typeof newValue === "string") {
+      setSearchItem({ id: null, name: newValue });
+      setInputValue(newValue);
+      return;
+    }
+    if (!newValue) {
+      setSearchItem({ id: null, name: "" });
+      return;
+    }
     const articleId = parseInt(newValue.id);
     setSearchItem({ id: articleId, name: "" });
     setInputValue(newValue.name);
@@ -96,7 +106,17 @@ export default function SearchDropDownInput({
       open={open}
       id="search-article"
       disableClearable
-      getOptionLabel={(option) => option.name}
+      getOptionLabel={(option) => {
+        if (typeof option === "string") return option; // freeSolo: wpisany tekst
+        if (option && typeof option === "object" && option.name)
+          return option.name;
+        return "";
+      }}
+      isOptionEqualToValue={(option, value) => {
+        // wartość może być stringiem (freeSolo) lub obiektem z listy
+        if (typeof value === "string") return false;
+        return option?.id === value?.id;
+      }}
       value={dropdownSelection}
       filterOptions={(options, { inputValue }) => {
         const normalizedInput = removeDiacritics(inputValue.toLowerCase());
@@ -128,6 +148,14 @@ export default function SearchDropDownInput({
       )}
       onChange={(event, inputValue) => handleSelect(event, inputValue)}
       onInputChange={(event, newInputValue) => handleType(event, newInputValue)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          if (typeof onEnterAdd === "function") {
+            onEnterAdd();
+          }
+        }
+      }}
       options={articlesProcessor.state.sort((a, b) => {
         if (
           isArticleInCart(a, shoppingCart) &&
