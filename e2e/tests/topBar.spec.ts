@@ -18,6 +18,20 @@ test("existing article can be found on dropdown", async ({
   );
 });
 
+test("hitting enter adds existing article", async ({
+  topBarPage,
+  article,
+  shoppingCartPage,
+}) => {
+  await topBarPage.articlesDropdown.selectArticle(article.name!);
+  await topBarPage.articlesDropdown.hitEnterInSearch();
+  await shoppingCartPage.verifyArticleInShoppingCart(
+    article.name!,
+    article.category!.name!
+  );
+  await topBarPage.articlesDropdown.verifyArticleIsGrayedOut(article.name!);
+});
+
 test("user can add existing article", async ({
   topBarPage,
   article,

@@ -26,6 +26,7 @@ export default function TopBar({
 
   const handleAddButtonClick = async () => {
     logger.debug("Add button clicked");
+    if (addButtonDisabled) return;
     if (!searchItem.id) {
       setEditingArticle({ name: inputValue, id: 0 });
       setArticlePopupOpen(true);
