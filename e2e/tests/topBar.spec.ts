@@ -1,10 +1,6 @@
 import { test } from "../src/fixtures/test.fixture";
 import { expect } from "@playwright/test";
 
-test.beforeEach(async ({ page }) => {
-  await page.goto("http://localhost:3000/");
-});
-
 test("add article button is disabled when no article selected", async ({
   topBarPage,
 }) => {

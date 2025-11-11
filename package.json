@@ -44,7 +44,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "cleanup": "tsx e2e/src/scripts/databaseCleanup.ts"
+    "cleanup": "tsx e2e/src/scripts/databaseCleanup.ts",
+    "e2e:local": "cross-env ENV=local   playwright test",
+    "e2e:development": "cross-env ENV=development   playwright test"
   },
   "eslintConfig": {
     "extends": [

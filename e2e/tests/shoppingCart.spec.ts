@@ -1,9 +1,5 @@
 import { test } from "../src/fixtures/test.fixture";
 
-test.beforeEach(async ({ page }) => {
-  await page.goto("http://localhost:3000/");
-});
-
 test("user can toggle article selection", async ({
   shoppingCartItem,
   shoppingCartPage,

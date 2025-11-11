@@ -21,7 +21,7 @@ jobs:
       - name: sleep 30 seconds
         run: sleep 30
       - name: Run Playwright tests
-        run: npx playwright test
+        run: npm run e2e:local
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:

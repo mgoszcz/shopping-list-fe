@@ -120,3 +120,7 @@ export const test = base.extend<TestFixture>({
     await use(shop);
   },
 });
+
+test.beforeEach(async ({ page }) => {
+  await page.goto("/", { waitUntil: "networkidle" });
+});

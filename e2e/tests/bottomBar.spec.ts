@@ -2,10 +2,6 @@ import { test } from "../src/fixtures/test.fixture";
 
 test.describe.configure({ mode: "serial" });
 
-test.beforeEach(async ({ page }) => {
-  await page.goto("http://localhost:3000/");
-});
-
 test("Clear list button", async ({
   bottomBarPage,
   shoppingCartPage,
