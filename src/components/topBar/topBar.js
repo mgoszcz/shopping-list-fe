@@ -59,6 +59,7 @@ export default function TopBar({
             setInputValue={setInputValue}
             size={isMobile ? "medium" : "large"}
             articlesProcessor={articlesProcessor}
+            onEnterAdd={handleAddButtonClick}
           />
           <IconButton
             sx={{
