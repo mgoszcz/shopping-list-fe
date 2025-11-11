@@ -43,6 +43,22 @@ function App() {
   const [editingArticle, setEditingArticle] = useState({});
   const [sendingData, setSendingData] = useState(false);
 
+  const shoppingCartProcessor = new ShoppingCartDataProcessor(
+    shoppingCart,
+    setShoppingCart,
+    shoppingCartSyncState,
+    setShoppingCartSyncState
+  );
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const articlesProcessor = new ShoppingArticlesProcessor(
+    articles,
+    setArticles,
+    shoppingCartProcessor,
+    articlesSynchState,
+    setArticlesSyncState
+  );
+
   useEffect(() => {
     const fetchTimestampData = async () =>
       getTimestampData()
@@ -62,10 +78,12 @@ function App() {
 
   useEffect(() => {
     shoppingCartProcessor.getShoppingCartItems();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shoppingCartTimestamp, currentShop]);
 
   useEffect(() => {
     articlesProcessor.getShoppingArticlesData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [articlesTimestamp]);
 
   useEffect(() => {
@@ -77,31 +95,19 @@ function App() {
       .catch((error) => logger.error("Failed to get current shop", error));
   }, [currentShopTimestamp]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (
       articlesSynchState === synchState.SENDING ||
       shoppingCartSyncState === synchState.SENDING
     ) {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       setSendingData(true);
     } else {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       setSendingData(false);
     }
   });
-
-  const shoppingCartProcessor = new ShoppingCartDataProcessor(
-    shoppingCart,
-    setShoppingCart,
-    shoppingCartSyncState,
-    setShoppingCartSyncState
-  );
-
-  const articlesProcessor = new ShoppingArticlesProcessor(
-    articles,
-    setArticles,
-    shoppingCartProcessor,
-    articlesSynchState,
-    setArticlesSyncState
-  );
 
   return (
     <ThemeProvider theme={darkTheme}>

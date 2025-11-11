@@ -20,10 +20,11 @@ import { APP_VERSION } from "../../constants/version";
 import CategoryOrderPopup from "../../popups/categoryOrderPopup";
 import AddShopPopup from "../../popups/addShopPopup";
 
-const ENVIRONMENT = process.env.REACT_APP_ENVIRONMENT;
+const environment = process.env.REACT_APP_ENVIRONMENT;
 
 const getColor = () => {
-  switch (ENVIRONMENT) {
+  // eslint-disable-next-line default-case
+  switch (environment) {
     case "local":
       return "darkred";
 
@@ -69,6 +70,7 @@ export const BottomBar = ({
       setLoading(false);
       setShops(fetchedShops);
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shopsTimestamp]);
 
   useEffect(() => {
@@ -152,6 +154,7 @@ export const BottomBar = ({
             backgroundColor: "#3B1C32",
             marginX: "auto",
           }}
+          data-testid="bottom-bar"
         >
           <Toolbar>
             <Box></Box>
@@ -242,7 +245,7 @@ export const BottomBar = ({
             >
               <Typography variant="body2" data-testid="applicationInfo">
                 Shopping List version {APP_VERSION}{" "}
-                {ENVIRONMENT === "production" ? "" : ENVIRONMENT}
+                {environment === "production" ? "" : environment}
               </Typography>
               <SynchronizationStatusBar
                 articlesState={articlesSyncState}

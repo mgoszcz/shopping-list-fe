@@ -34,6 +34,7 @@ export default function SearchDropDownInput({
     setOpen(true);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (articlesProcessor.synchronizationState === synchState.FETCHING) {
       setLoading(true);
@@ -108,10 +109,18 @@ export default function SearchDropDownInput({
       renderOption={(props, option) => (
         <li {...props} key={option.id} data-id={option.id}>
           <Box>
-            <Typography variant={"body1"} component={"h5"}>
+            <Typography
+              variant={"body1"}
+              component={"h5"}
+              data-testid="article-list-item.article-name"
+            >
               {option.name}
             </Typography>
-            <Typography variant={"body2"} component={"h6"}>
+            <Typography
+              variant={"body2"}
+              component={"h6"}
+              data-testid="article-list-item.category-name"
+            >
               {option.category.name}
             </Typography>
           </Box>

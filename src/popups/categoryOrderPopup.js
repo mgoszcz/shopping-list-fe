@@ -50,6 +50,7 @@ export default function CategoryOrderPopup({
       setCategoryOrder(orderData);
       setLoading(false);
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   useEffect(() => {

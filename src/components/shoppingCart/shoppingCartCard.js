@@ -60,6 +60,7 @@ const ShoppingCartCard = ({
           borderRadius: "5px",
         }}
         marginY={1}
+        data-testid="shopping-cart-card.card-container"
       >
         <CardActionArea
           onClick={() => shoppingCartProcessor.toggleChecked(cartItem)}
@@ -82,11 +83,17 @@ const ShoppingCartCard = ({
                 overflow: "hidden",
                 maxWidth: isMobile ? "100%" : "90%",
               }}
+              data-testid="shopping-cart-card.article-name"
             >
               {cartItem.article.name}
             </Typography>
             {!isMobile && (
-              <Typography variant={"body2"} component={"h4"} marginLeft={2}>
+              <Typography
+                variant={"body2"}
+                component={"h4"}
+                marginLeft={2}
+                data-testid="shopping-cart-card.category-name"
+              >
                 {cartItem.category.name}
               </Typography>
             )}
@@ -142,12 +149,14 @@ const ShoppingCartCard = ({
               setArticlePopupOpen(true);
               setEditingArticle({ id: cartItem.article.id });
             }}
+            data-testid="edit-article-button"
           >
             <Edit fontSize={isMobile ? "small" : "large"} />
           </IconButton>
           <IconButton
             aria-label={"delete"}
             onClick={() => shoppingCartProcessor.deleteCartItem(cartItem)}
+            data-testid="delete-article-button"
           >
             <Delete fontSize={isMobile ? "small" : "large"} />
           </IconButton>

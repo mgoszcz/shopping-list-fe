@@ -59,6 +59,7 @@ export default function ArticlePopup({
       setSelectedCategory(_selectedCategoryOverride ?? fetchedArticle.category);
       setLoading(false);
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [article]);
 
   useEffect(() => {

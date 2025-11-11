@@ -41,6 +41,7 @@ export default function AddShopPopup({
         setNewName(editingShop.name);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   const handleCloseConfirmation = () => {
