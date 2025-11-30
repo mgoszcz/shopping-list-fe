@@ -82,6 +82,7 @@ export default function ArticlePopup({
       setIsApplyDisabled(false);
       setErrorMessage("");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [articleName, selectedCategory]);
 
   const doesArticleExist = () => {
