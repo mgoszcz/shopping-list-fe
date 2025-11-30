@@ -19,11 +19,11 @@ beforeEach(() => {
 describe("ArticlePopup", () => {
   const mockSetOpen = jest.fn();
 
-  const mockArticle = { id: 0, name: "Milk" };
+  const mockArticle = { id: 0, name: "New article" };
+  const existingArticle = { id: 0, name: "Milk" };
 
   const mockArticlesProcessor = {
     getArticleById: jest.fn(() => {
-      console.log("IN");
       return Promise.resolve({
         id: 1,
         name: "Milk",
@@ -31,6 +31,10 @@ describe("ArticlePopup", () => {
       });
     }),
     createArticle: jest.fn().mockResolvedValue({ ok: true }),
+    state: [
+      { id: 1, name: "Milk", category: { id: 1, name: "fruits" } },
+      { id: 2, name: "Apple", category: { id: 1, name: "fruits" } },
+    ],
   };
 
   describe("AddArticlePopup", () => {
@@ -54,7 +58,7 @@ describe("ArticlePopup", () => {
       await waitFor(() => {
         expect(dialogTitle).toHaveTextContent("Add article");
         expect(articleName).toBeInTheDocument();
-        expect(articleName).toHaveValue("Milk");
+        expect(articleName).toHaveValue(mockArticle.name);
         expect(removeButton).not.toBeVisible();
       });
 
@@ -84,7 +88,7 @@ describe("ArticlePopup", () => {
       expect(mockArticlesProcessor.createArticle).toHaveBeenCalled();
       expect(mockArticlesProcessor.createArticle).toHaveBeenCalledWith(
         {
-          name: "Milk",
+          name: mockArticle.name,
           category: { id: 1, name: "fruits" },
         },
         true
@@ -113,12 +117,31 @@ describe("ArticlePopup", () => {
       expect(mockArticlesProcessor.createArticle).toHaveBeenCalled();
       expect(mockArticlesProcessor.createArticle).toHaveBeenCalledWith(
         {
-          name: "Milk",
+          name: mockArticle.name,
           category: { id: 99, name: "newCategory" },
         },
         true
       );
       expect(mockSetOpen).toHaveBeenCalledWith(false);
+    });
+  });
+
+  test("Apply is disabled and error is diaplyed for existing article", async () => {
+    render(
+      <ArticlePopup
+        open={true}
+        setOpen={mockSetOpen}
+        article={existingArticle}
+        articlesProcessor={mockArticlesProcessor}
+        _selectedCategoryOverride={{ id: 1, name: "fruits" }}
+      />
+    );
+    const applyButton = screen.getByRole("button", { name: /apply/i });
+    const error = screen.getByTestId("article-dialog-error");
+    await waitFor(() => {
+      expect(applyButton).not.toBeEnabled();
+      expect(error).toBeVisible();
+      expect(error).toHaveTextContent("This article already exists");
     });
   });
 });
