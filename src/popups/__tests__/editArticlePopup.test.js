@@ -15,6 +15,10 @@ const mockArticlesProcessor = {
   createArticle: jest.fn(),
   editArticle: jest.fn(),
   removeArticle: jest.fn(),
+  state: [
+    { id: 1, name: "Milk", category: { id: 1, name: "fruits" } },
+    { id: 2, name: "Apple", category: { id: 1, name: "fruits" } },
+  ],
 };
 
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
@@ -45,6 +49,7 @@ describe("EditArticlePopup", () => {
   const mockSetOpen = jest.fn();
 
   const mockArticle = { id: 1, name: "Milk" };
+  const existingArticle = { id: 2, name: "Apple" };
 
   test("renders with proper title and cancel button works", async () => {
     render(
@@ -195,6 +200,32 @@ describe("EditArticlePopup", () => {
         mockArticle
       );
       expect(mockSetOpen).toHaveBeenCalledWith(false);
+    });
+  });
+
+  test("Apply is disabled and error is diaplyed for existing article", async () => {
+    const user = userEvent.setup();
+    render(
+      <ArticlePopup
+        open={true}
+        setOpen={mockSetOpen}
+        article={existingArticle}
+        articlesProcessor={mockArticlesProcessor}
+        _selectedCategoryOverride={{ id: 1, name: "fruits" }}
+      />
+    );
+    const applyButton = screen.getByRole("button", { name: /apply/i });
+    const error = screen.getByTestId("article-dialog-error");
+    const articleName = screen.getByRole("textbox", {
+      name: /article name/i,
+    });
+
+    fireEvent.change(articleName, { target: { value: existingArticle.name } });
+
+    await waitFor(() => {
+      expect(applyButton).not.toBeEnabled();
+      expect(error).toBeVisible();
+      expect(error).toHaveTextContent("This article already exists");
     });
   });
 });

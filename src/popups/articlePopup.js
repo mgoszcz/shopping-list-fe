@@ -36,8 +36,10 @@ export default function ArticlePopup({
   const deleteButtonRef = React.useRef(null);
   const dialogRef = React.useRef(null);
   const [originalArticleName, setOriginalArticleName] = React.useState("");
+  const [originalCategory, setOriginalCategory] = React.useState({});
   const [isApplyDisabled, setIsApplyDisabled] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState("");
 
   useEffect(() => {
     setArticleName("");
@@ -56,6 +58,7 @@ export default function ArticlePopup({
       setCategories(fetchedCategories);
       setArticleName(fetchedArticle.name);
       setOriginalArticleName(fetchedArticle.name);
+      setOriginalCategory(fetchedArticle.category);
       setSelectedCategory(_selectedCategoryOverride ?? fetchedArticle.category);
       setLoading(false);
     })();
@@ -69,10 +72,41 @@ export default function ArticlePopup({
       Object.keys(selectedCategory).length === 0
     ) {
       setIsApplyDisabled(true);
+      setErrorMessage("");
+    } else if (doesArticleExist()) {
+      setIsApplyDisabled(true);
+      if (!isTheSameAsEditingArticle()) {
+        setErrorMessage("This article already exists");
+      }
     } else {
       setIsApplyDisabled(false);
+      setErrorMessage("");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [articleName, selectedCategory]);
+
+  const doesArticleExist = () => {
+    for (const article of articlesProcessor.state) {
+      if (
+        article.name === articleName &&
+        article.category.name === selectedCategory.name
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  const isTheSameAsEditingArticle = () => {
+    if (article.id === 0) return false;
+    if (
+      originalArticleName === articleName &&
+      originalCategory.name === selectedCategory.name
+    )
+      return true;
+    return false;
+  };
 
   const handleEdit = async () => {
     let category;
@@ -153,7 +187,9 @@ export default function ArticlePopup({
         PaperProps={{ sx: { minWidth: 300, maxWidth: "50vw" } }}
       >
         <DialogTitle data-testid="add-edit-article-dialog-title">
-          {article.id !== 0 ? "Edit article" : "Add article"}
+          {article.id !== 0
+            ? `Edit article ${originalArticleName} category ${originalCategory.name}`
+            : "Add article"}
         </DialogTitle>
         <DialogContent>
           <Box>
@@ -176,6 +212,9 @@ export default function ArticlePopup({
               }
               freeSoloEnabled={true}
             />
+            <Typography variant="subtitle1" data-testid="article-dialog-error">
+              {errorMessage}
+            </Typography>
           </Box>
           <Box>
             <Button
